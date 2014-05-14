@@ -7,9 +7,9 @@ Please note that you will need to make sure to have the necessary rights to writ
 
 Installation
 -------------
-Simply check out the repository and use the command <pre><code>go build && go install</code></pre> The package will then be installed to your local respository, along with the package documentation. The documentation contains more details on the usage of this package. 
+Simply check out the repository and use the commands <pre><code>go build && go install</code></pre> The package will then be installed to your local respository, along with the package documentation. The documentation contains more details on the usage of this package. 
 
-Don't worry about the C sources, as CGO will take care of compiling these for you as well.
+Don't worry about the C sources, as CGO will take care of compiling these for you as well. However, you will need to make sure to have the necessray header files for gcc installed on your system. They should be located underneath "/usr/include/linux".
 
 License
 --------
