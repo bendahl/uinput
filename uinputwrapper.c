@@ -30,8 +30,7 @@ int initVKeyboardDevice(char* uinputPath) {
                 deviceHandle = -1;
             }
         } else {
-            ioctl (deviceHandle, UI_SET_EVBIT, EV_REP);
-
+			// register key events
             for(i=0; i<255; i++) {
                 ioctl(deviceHandle, UI_SET_KEYBIT, i);
             }
@@ -68,14 +67,24 @@ int sendBtnEvent(int deviceHandle, int key, int btnState) {
     ev.value= btnState;
     int ret = write(deviceHandle, &ev, sizeof(ev));
 
+	// in case of any error return the error and skip syncing events
+	if (ret < 0) {
+		return ret;
+	}
 
-	memset(&ev, 0, sizeof(ev));
-	ev.type  = EV_SYN;
-	ev.code  = 0;
-	ev.value = SYN_REPORT;
-	ret = write(deviceHandle, &ev, sizeof(ev));
+	ret = syncEvents(deviceHandle, &ev);
 
 	return ret;
+}
+
+int syncEvents(int deviceHandle, struct input_event *ev) {
+	memset(ev, 0, sizeof(*ev));
+
+	ev->type  = EV_SYN;
+	ev->code  = 0;
+	ev->value = SYN_REPORT;
+
+	return write(deviceHandle, ev, sizeof(*ev));
 }
 
 int releaseDevice(int deviceHandle) {
