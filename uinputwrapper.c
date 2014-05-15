@@ -30,8 +30,8 @@ int initVKeyboardDevice(char* uinputPath) {
                 deviceHandle = -1;
             }
         } else {
-			// register key events
-            for(i=0; i<255; i++) {
+			// register key events - only values from 1 to 255 are valid
+            for(i=1; i<256; i++) {
                 ioctl(deviceHandle, UI_SET_KEYBIT, i);
             }
 
@@ -59,6 +59,16 @@ int initVKeyboardDevice(char* uinputPath) {
 }
 
 int sendBtnEvent(int deviceHandle, int key, int btnState) {
+	// check whether the keycode is valid and return -1 on error
+	if (key < 1 || key > 255) {
+		return -1;
+	}
+
+	// btnState should only be either 0 or 1
+	if (btnState < 0 || btnState > 1) {
+		return -1;
+	}
+
     struct input_event ev;
     memset(&ev, 0, sizeof(ev));
     
