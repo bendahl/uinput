@@ -3,7 +3,7 @@ Uinput
 
 This go package provides wrapper functions for the LINUX uinput device. As it stands right now, only virtual keyboards are supported. Support for realative and absolute input devices will be added later on.
 
-Please note that you will need to make sure to have the necessary rights to write to uinput. You can either chmod your uinput device, or add a rule in /etc/udev/rules.d to allow your user's group or a dedicated group to write to the device. An example file could be named "99-user.rules" and the line you would need to add for "user", belonging to the group "utest" would be 'KERNEL=="uinput", GROUP="utest", MODE:="0660"'. Also, make sure to restart or at least log out of your current session in order for these settings to work. Which approach you'll take is up to you, although I would encourage the creation of a udev rule, as it is the clean approach.
+Please note that you will need to make sure to have the necessary rights to write to uinput. You can either chmod your uinput device, or add a rule in /etc/udev/rules.d to allow your user's group or a dedicated group to write to the device. An example file could be named "99-user.rules" and the line you would need to add for "user", belonging to the group "utest" would be <pre><code>KERNEL=="uinput", GROUP="utest", MODE:="0660"</code></pre> Also, make sure to restart in order for these settings to work. Which approach you'll take is up to you, although I would encourage the creation of a udev rule, as it is the clean approach.
 
 Installation
 -------------
