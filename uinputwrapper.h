@@ -21,7 +21,7 @@
  * virtual keyboard. It will return 0 if successful, otherwise
  * -1 will be returned.
  */
-int initVKeyboardDevice(char* uinputPath);
+int initVKeyboardDevice(char* uinputPath, char* virtDeviceName);
 
 /*
  * Send a button event to the virutal keyboard. Possible values for the key

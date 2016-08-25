@@ -14,7 +14,7 @@
 
 #include "uinputwrapper.h"
 
-int initVKeyboardDevice(char* uinputPath) {
+int initVKeyboardDevice(char* uinputPath, char* virtDeviceName) {
     int i;
     int deviceHandle = -1;
     struct uinput_user_dev uidev;
@@ -39,7 +39,7 @@ int initVKeyboardDevice(char* uinputPath) {
     }
 
     memset(&uidev, 0, sizeof (uidev));
-    snprintf(uidev.name, UINPUT_MAX_NAME_SIZE, "uinput_vkeyboard");
+    snprintf(uidev.name, UINPUT_MAX_NAME_SIZE, "%s", virtDeviceName);
     uidev.id.bustype = BUS_USB;
     uidev.id.vendor  = 0x4711;
     uidev.id.product = 0x0815;

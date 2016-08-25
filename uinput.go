@@ -28,10 +28,14 @@ import (
 	"unsafe"
 )
 
-// VKeyboard represents a virtual keyboard device. There are several 
+// VKeyboard represents a virtual keyboard device. There are several
 // methods available to work with this virtual device. Devices can be
 // created, receive events, and closed.
 type VKeyboard struct {
+	// The Name of the uinput device. Will be trimmed to a Max Length of 80 bytes.
+	// If left blank the device will have a default name.
+	Name string
+
 	id int
 }
 
@@ -41,7 +45,8 @@ type VKeyboard struct {
 func (vk *VKeyboard) Create(path string) (err error) {
 	vk.id = -1
 	var ret error
-	vk.id, ret = createVKeyboardDevice(path)
+
+	vk.id, ret = createVKeyboardDevice(path, vk.Name)
 	return ret
 }
 
@@ -65,22 +70,29 @@ func (vk *VKeyboard) SendKeyRelease(key int) (err error) {
 	return sendBtnEvent(vk.id, key, 0)
 }
 
-// Close will close the device and free resources. 
+// Close will close the device and free resources.
 // It's usually a good idea to use defer to call this function.
-func (vk * VKeyboard) Close() (err error) {
+func (vk *VKeyboard) Close() (err error) {
 	if vk.id < 0 {
 		return errors.New("Keyboard not initialized. Closing device failed.")
 	}
 	return closeDevice(vk.id)
 }
 
-func createVKeyboardDevice(path string) (deviceId int, err error) {
-	var fd C.int
-	var deviceName = C.CString(path)
-	defer C.free(unsafe.Pointer(deviceName))
+func createVKeyboardDevice(path, name string) (deviceId int, err error) {
+	uinputDevice := C.CString(path)
+	defer C.free(unsafe.Pointer(uinputDevice))
 
-	fd = C.initVKeyboardDevice(deviceName)
+	if name == "" {
+		name = "uinput_default_vkeyboard"
+	}
+	virtDeviceName := C.CString(name)
+	defer C.free(unsafe.Pointer(virtDeviceName))
+
+	var fd C.int
+	fd = C.initVKeyboardDevice(uinputDevice, virtDeviceName)
 	if fd < 0 {
+		// TODO: Map ErrValues into more specific Errors
 		return 0, errors.New("Could not initialize device.")
 	}
 
