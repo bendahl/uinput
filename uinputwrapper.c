@@ -20,40 +20,40 @@ int initVKeyboardDevice(char* uinputPath) {
     struct uinput_user_dev uidev;
 
     deviceHandle = open(uinputPath, O_WRONLY | O_NONBLOCK | O_NDELAY);
+    if(deviceHandle <= 0) {
+        return -1;
+    }
 
     // if a valid handle could be determined, try to enable key events
-    if(deviceHandle > 0) {
-        if(ioctl(deviceHandle, UI_SET_EVBIT, EV_KEY) < 0) {
-            if(releaseDevice(deviceHandle) < 0) {
-                exit(EXIT_FAILURE);
-            } else {
-                deviceHandle = -1;
-            }
+    if(ioctl(deviceHandle, UI_SET_EVBIT, EV_KEY) < 0) {
+        if(releaseDevice(deviceHandle) < 0) {
+            exit(EXIT_FAILURE);
         } else {
-			// register key events - only values from 1 to 255 are valid
-            for(i=1; i<256; i++) {
-                ioctl(deviceHandle, UI_SET_KEYBIT, i);
-            }
-
-            memset(&uidev, 0, sizeof (uidev));
-            snprintf(uidev.name, UINPUT_MAX_NAME_SIZE, "uinput_vkeyboard");
-            uidev.id.bustype = BUS_USB;
-            uidev.id.vendor  = 0x4711;
-            uidev.id.product = 0x0815;
-            uidev.id.version = 1;
-
-            if (write(deviceHandle, &uidev, sizeof (uidev)) < 0) {
-                exit(EXIT_FAILURE);
-            }
-
-            if (ioctl(deviceHandle, UI_DEV_CREATE) < 0) {
-                exit(EXIT_FAILURE);
-            }
-
-            sleep(2);
-
+            return -1;
         }
     }
+
+    // register key events - only values from 1 to 255 are valid
+    for(i=1; i<256; i++) {
+        ioctl(deviceHandle, UI_SET_KEYBIT, i);
+    }
+
+    memset(&uidev, 0, sizeof (uidev));
+    snprintf(uidev.name, UINPUT_MAX_NAME_SIZE, "uinput_vkeyboard");
+    uidev.id.bustype = BUS_USB;
+    uidev.id.vendor  = 0x4711;
+    uidev.id.product = 0x0815;
+    uidev.id.version = 1;
+
+    if (write(deviceHandle, &uidev, sizeof (uidev)) < 0) {
+        exit(EXIT_FAILURE);
+    }
+
+    if (ioctl(deviceHandle, UI_DEV_CREATE) < 0) {
+        exit(EXIT_FAILURE);
+    }
+
+    sleep(2);
 
     return deviceHandle;
 }
