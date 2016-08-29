@@ -58,6 +58,16 @@ int initVKeyboardDevice(char* uinputPath, char* virtDeviceName) {
     return deviceHandle;
 }
 
+int syncEvents(int deviceHandle, struct input_event *ev) {
+	memset(ev, 0, sizeof(*ev));
+
+	ev->type  = EV_SYN;
+	ev->code  = 0;
+	ev->value = SYN_REPORT;
+
+	return write(deviceHandle, ev, sizeof(*ev));
+}
+
 int sendBtnEvent(int deviceHandle, int key, int btnState) {
 	// check whether the keycode is valid and return -1 on error
 	if (key < 1 || key > 255) {
@@ -85,16 +95,6 @@ int sendBtnEvent(int deviceHandle, int key, int btnState) {
 	ret = syncEvents(deviceHandle, &ev);
 
 	return ret;
-}
-
-int syncEvents(int deviceHandle, struct input_event *ev) {
-	memset(ev, 0, sizeof(*ev));
-
-	ev->type  = EV_SYN;
-	ev->code  = 0;
-	ev->value = SYN_REPORT;
-
-	return write(deviceHandle, ev, sizeof(*ev));
 }
 
 int releaseDevice(int deviceHandle) {
