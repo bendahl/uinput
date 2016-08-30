@@ -44,7 +44,7 @@ type Keyboard interface {
 
 type vKeyboard struct {
 	name string
-	id   int
+	fd   int
 }
 
 func CreateKeyboard(path, name string) (Keyboard, error) {
@@ -57,17 +57,17 @@ func CreateKeyboard(path, name string) (Keyboard, error) {
 }
 
 func (vk vKeyboard) SendKeyPress(key int) error {
-	return sendBtnEvent(vk.id, key, 1)
+	return sendBtnEvent(vk.fd, key, 1)
 }
 
 func (vk vKeyboard) SendKeyRelease(key int) error {
-	return sendBtnEvent(vk.id, key, 0)
+	return sendBtnEvent(vk.fd, key, 0)
 }
 
 // Close will close the device and free resources.
 // It's usually a good idea to use defer to call this function.
 func (vk vKeyboard) Close() error {
-	return closeDevice(vk.id)
+	return closeDevice(vk.fd)
 }
 
 func createVKeyboardDevice(path, name string) (deviceId int, err error) {
