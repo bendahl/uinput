@@ -76,7 +76,14 @@ func (vk *VKeyboard) Close() (err error) {
 	if vk.id < 0 {
 		return errors.New("Keyboard not initialized. Closing device failed.")
 	}
-	return closeDevice(vk.id)
+
+	err = closeDevice(vk.id)
+	if err != nil {
+		return err
+	}
+
+	vk.id = -1
+	return nil
 }
 
 func createVKeyboardDevice(path, name string) (deviceId int, err error) {
