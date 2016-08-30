@@ -7,12 +7,11 @@ example).
 In order to use the virtual keyboard, you will need to follow these three steps:
 
 	1. Initialize the device
-		Example: vk := VKeyboard{}
-	             err := vk.Create("/dev/uinput")
-
+		Example: vk, err := CreateKeyboard("/dev/uinput", "Virtual Keyboard")
 
 	2. Send Button events to the device
 		Example: err = vk.SendKeyPress(uinput.KEY_D)
+				 err = vk.SendKeyRelease(uinput.KEY_D)
 
 	3. Close the device
 		Example: err = vk.Close()
@@ -25,65 +24,50 @@ package uinput
 import "C"
 import (
 	"errors"
+	"io"
 	"unsafe"
 )
 
-// VKeyboard represents a virtual keyboard device. There are several
-// methods available to work with this virtual device. Devices can be
-// created, receive events, and closed.
-type VKeyboard struct {
-	// The Name of the uinput device. Will be trimmed to a Max Length of 80 bytes.
-	// If left blank the device will have a default name.
-	Name string
+// A Keyboard is an key event output device. It is used to
+// enable a program to simulate HID keyboard input events.
+type Keyboard interface {
+	// SendKeyPress will send a keypress event to an existing keyboard device.
+	// The key can be any of the predefined keycodes from uinputdefs.
+	SendKeyPress(key int) error
 
-	id int
+	// SendKeyRelease will send a keyrelease event to an existing keyboard device.
+	// The key can be any of the predefined keycodes from uinputdefs.
+	SendKeyRelease(key int) error
+
+	io.Closer
 }
 
-// Create creates a new virtual keyboard device.
-// Make sure to pass the correct path to the current system's
-// uinput device (usually either "/dev/uinput" or "/dev/input/uinput".
-func (vk *VKeyboard) Create(path string) (err error) {
-	vk.id = -1
-	var ret error
-
-	vk.id, ret = createVKeyboardDevice(path, vk.Name)
-	return ret
+type vKeyboard struct {
+	name string
+	id   int
 }
 
-// SendKeyPress will send a keypress event to an existing keyboard device.
-// The key can be any of the predefined keycodes from uinputdefs.
-func (vk *VKeyboard) SendKeyPress(key int) (err error) {
-	if vk.id < 0 {
-		return errors.New("Keyboard not initialized. Sending keypress event failed.")
+func CreateKeyboard(path, name string) (Keyboard, error) {
+	fd, err := createVKeyboardDevice(path, name)
+	if err != nil {
+		return nil, err
 	}
 
+	return vKeyboard{name, fd}, nil
+}
+
+func (vk vKeyboard) SendKeyPress(key int) error {
 	return sendBtnEvent(vk.id, key, 1)
 }
 
-// SendKeyRelease will send a keyrelease event to an existing keyboard device.
-// The key can be any of the predefined keycodes from uinputdefs.
-func (vk *VKeyboard) SendKeyRelease(key int) (err error) {
-	if vk.id < 0 {
-		return errors.New("Keyboard not initialized. Sending keyrelease event failed.")
-	}
-
+func (vk vKeyboard) SendKeyRelease(key int) error {
 	return sendBtnEvent(vk.id, key, 0)
 }
 
 // Close will close the device and free resources.
 // It's usually a good idea to use defer to call this function.
-func (vk *VKeyboard) Close() (err error) {
-	if vk.id < 0 {
-		return errors.New("Keyboard not initialized. Closing device failed.")
-	}
-
-	err = closeDevice(vk.id)
-	if err != nil {
-		return err
-	}
-
-	vk.id = -1
-	return nil
+func (vk vKeyboard) Close() error {
+	return closeDevice(vk.id)
 }
 
 func createVKeyboardDevice(path, name string) (deviceId int, err error) {
