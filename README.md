@@ -19,8 +19,3 @@ ToDos/ Open Issues
 ------------------
 The package is currently a work in progress and some more testing will need to be done. Also, as mentioned before, a few features will still need to be implemented as well. To get an idea of the things that are on the current todo list, check out the file "TODO.md". As always, helpful comments and ideas are always welcome. Feel free to do some testing on your own if you're up to it.
 
-Version History
----------------
-* 2014-05-11 - V0.1 
-	
-	This is an initial snapshot release, containing the basic functionality of a virtual keyboard.
