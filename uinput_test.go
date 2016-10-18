@@ -5,10 +5,8 @@ import (
 )
 
 // This test will create a basic VKeyboard, send a key command and then close the keyboard device
-func TestBasicVKeyboard(t *testing.T) {
-	vk := VKeyboard{}
-	err := vk.Create("/dev/uinput")
-
+func TestBasicKeyboard(t *testing.T) {
+	vk, err := CreateKeyboard("/dev/uinput", "Test Basic Keyboard")
 	if err != nil {
 		t.Fatalf("Failed to create the virtual keyboard. Last error was: %s\n", err)
 	}
@@ -35,9 +33,7 @@ func TestBasicVKeyboard(t *testing.T) {
 // This test will confirm that a proper error code is returned if an invalid uinput path is
 // passed to the library
 func TestInvalidDevicePath(t *testing.T) {
-	vk := VKeyboard{}
-	err := vk.Create("/invalid/path")
-
+	vk, err := CreateKeyboard("/invalid/path", "Invalid Device Path")
 	if err == nil {
 		// this usually shouldn't happen, but if the device is created, we need to close it
 		vk.Close()
@@ -48,15 +44,12 @@ func TestInvalidDevicePath(t *testing.T) {
 // This test will confirm that a proper error code is returned if an invalid keycode is
 // passed to the library
 func TestInvalidKeycode(t *testing.T) {
-	vk := VKeyboard{}
-	err := vk.Create("/dev/uinput")
-
+	vk, err := CreateKeyboard("/dev/uinput", "Test Keyboard")
 	if err != nil {
 		t.Fatalf("Failed to create the virtual keyboard. Last error was: %s\n", err)
 	}
 
 	err = vk.SendKeyPress(4711)
-
 	if err == nil {
 		t.Fatalf("Sending an invalid keycode did not trigger an error. Got: %d.\n")
 	}
