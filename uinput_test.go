@@ -51,7 +51,7 @@ func TestInvalidKeycode(t *testing.T) {
 
 	err = vk.SendKeyPress(4711)
 	if err == nil {
-		t.Fatalf("Sending an invalid keycode did not trigger an error. Got: %d.\n")
+		t.Fatalf("Sending an invalid keycode did not trigger an error.\n")
 	}
 
 	vk.Close()
