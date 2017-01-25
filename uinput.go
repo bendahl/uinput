@@ -47,6 +47,8 @@ type vKeyboard struct {
 	fd   int
 }
 
+// CreateKeyboard will create a new keyboard using the given uinput
+// device path of the uinput device.
 func CreateKeyboard(path, name string) (Keyboard, error) {
 	fd, err := createVKeyboardDevice(path, name)
 	if err != nil {
@@ -70,7 +72,7 @@ func (vk vKeyboard) Close() error {
 	return closeDevice(vk.fd)
 }
 
-func createVKeyboardDevice(path, name string) (deviceId int, err error) {
+func createVKeyboardDevice(path, name string) (deviceID int, err error) {
 	uinputDevice := C.CString(path)
 	defer C.free(unsafe.Pointer(uinputDevice))
 
@@ -84,24 +86,22 @@ func createVKeyboardDevice(path, name string) (deviceId int, err error) {
 	fd = C.initVKeyboardDevice(uinputDevice, virtDeviceName)
 	if fd < 0 {
 		// TODO: Map ErrValues into more specific Errors
-		return 0, errors.New("Could not initialize device.")
+		return 0, errors.New("Could not initialize device")
 	}
 
 	return int(fd), nil
 }
 
-func sendBtnEvent(deviceId int, key int, btnState int) (err error) {
-	if C.sendBtnEvent(C.int(deviceId), C.int(key), C.int(btnState)) < 0 {
-		return errors.New("Sending keypress failed.")
-	} else {
-		return nil
+func sendBtnEvent(deviceID int, key int, btnState int) (err error) {
+	if C.sendBtnEvent(C.int(deviceID), C.int(key), C.int(btnState)) < 0 {
+		return errors.New("Sending keypress failed")
 	}
+	return nil
 }
 
-func closeDevice(deviceId int) (err error) {
-	if int(C.releaseDevice(C.int(deviceId))) < 0 {
-		return errors.New("Closing device failed.")
-	} else {
-		return nil
+func closeDevice(deviceID int) (err error) {
+	if int(C.releaseDevice(C.int(deviceID))) < 0 {
+		return errors.New("Closing device failed")
 	}
+	return nil
 }
