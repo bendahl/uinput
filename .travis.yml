@@ -3,5 +3,7 @@ language: go
 go:
   1.7.x
 
+sudo: required
+
 before install:
   - echo KERNEL==\"uinput\", GROUP=\"$USER\", MODE:=\"0660\" > /etc/udev/rules.d/99-$USER.rules
