@@ -1,7 +1,7 @@
 /*
 Package uinput provides access to the userland input device driver uinput on linux systems.
 For now, only the creation of a virtual keyboard is supported. The keycodes, that are available
-and can be used to trigger key press events, are part of this package ("KEY_1" for number 1, for
+and can be used to trigger key press events, are part of this package ("Key1" for number 1, for
 example).
 
 In order to use the virtual keyboard, you will need to follow these three steps:
@@ -10,22 +10,19 @@ In order to use the virtual keyboard, you will need to follow these three steps:
 		Example: vk, err := CreateKeyboard("/dev/uinput", "Virtual Keyboard")
 
 	2. Send Button events to the device
-		Example: err = vk.SendKeyPress(uinput.KEY_D)
-				 err = vk.SendKeyRelease(uinput.KEY_D)
+		Example: err = vk.SendKeyPress(uinput.KeyD)
+				 err = vk.SendKeyRelease(uinput.KeyD)
 
 	3. Close the device
 		Example: err = vk.Close()
 */
 package uinput
 
-/*
-#include "uinputwrapper.h"
-*/
-import "C"
 import (
-	"errors"
 	"io"
-	"unsafe"
+	"os"
+	"errors"
+	"fmt"
 )
 
 // A Keyboard is an key event output device. It is used to
@@ -43,65 +40,44 @@ type Keyboard interface {
 }
 
 type vKeyboard struct {
-	name string
-	fd   int
+	name       []byte
+	deviceFile *os.File
 }
 
 // CreateKeyboard will create a new keyboard using the given uinput
 // device path of the uinput device.
-func CreateKeyboard(path, name string) (Keyboard, error) {
+func CreateKeyboard(path string, name []byte) (Keyboard, error) {
+	if path == "" {
+		return nil, errors.New("device path must not be empty")
+	}
+	if len(name) > uinputMaxNameSize {
+		return nil, fmt.Errorf("device name %s is too long (maximum of %d characters allowed)", name, uinputMaxNameSize)
+	}
+
 	fd, err := createVKeyboardDevice(path, name)
 	if err != nil {
 		return nil, err
 	}
 
-	return vKeyboard{name, fd}, nil
+	return vKeyboard{name: name, deviceFile: fd}, nil
 }
 
+// SendKeyPress will send the key code passed (see uinputdefs.go for available keycodes). Note that unless a key release
+// event is sent to the device, the key will remain pressed and therefore input will continuously be generated. Therefore,
+// do not forget to call "SendKeyRelease" afterwards.
 func (vk vKeyboard) SendKeyPress(key int) error {
-	return sendBtnEvent(vk.fd, key, 1)
+	return sendBtnEvent(vk.deviceFile, key, btnStatePressed)
 }
 
+// SendKeyRelease will release the given key passed as a parameter (see uinputdefs.go for available keycodes). In most
+// cases it is recommended to call this function immediately after the "SendKeyPress" function in order to only issue a
+// singel key press.
 func (vk vKeyboard) SendKeyRelease(key int) error {
-	return sendBtnEvent(vk.fd, key, 0)
+	return sendBtnEvent(vk.deviceFile, key, btnStateReleased)
 }
 
 // Close will close the device and free resources.
 // It's usually a good idea to use defer to call this function.
 func (vk vKeyboard) Close() error {
-	return closeDevice(vk.fd)
-}
-
-func createVKeyboardDevice(path, name string) (deviceID int, err error) {
-	uinputDevice := C.CString(path)
-	defer C.free(unsafe.Pointer(uinputDevice))
-
-	if name == "" {
-		name = "uinput_default_vkeyboard"
-	}
-	virtDeviceName := C.CString(name)
-	defer C.free(unsafe.Pointer(virtDeviceName))
-
-	var fd C.int
-	fd = C.initVKeyboardDevice(uinputDevice, virtDeviceName)
-	if fd < 0 {
-		// TODO: Map ErrValues into more specific Errors
-		return 0, errors.New("Could not initialize device")
-	}
-
-	return int(fd), nil
-}
-
-func sendBtnEvent(deviceID int, key int, btnState int) (err error) {
-	if C.sendBtnEvent(C.int(deviceID), C.int(key), C.int(btnState)) < 0 {
-		return errors.New("Sending keypress failed")
-	}
-	return nil
-}
-
-func closeDevice(deviceID int) (err error) {
-	if int(C.releaseDevice(C.int(deviceID))) < 0 {
-		return errors.New("Closing device failed")
-	}
-	return nil
+	return closeDevice(vk.deviceFile)
 }
