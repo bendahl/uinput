@@ -3,8 +3,8 @@ language: go
 go:
   1.7.x
 
-sudo:
-  required
+dist: trusty
+sudo: required
 
 before install:
   - chmod +0666 /dev/uinput
