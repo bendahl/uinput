@@ -3,8 +3,8 @@ language: go
 go:
   1.7.x
 
-sudo: required
+sudo:
+  required
 
 before install:
-  - echo KERNEL==\"uinput\", GROUP=\"$USER\", MODE:=\"0660\" > /etc/udev/rules.d/99-$USER.rules
-  - udevadm trigger
+  - chmod +0666 /dev/uinput
