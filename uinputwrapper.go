@@ -152,17 +152,11 @@ func sendBtnEvent(deviceFile *os.File, key int, btnState int) (err error) {
 	if key < 1 || key > keyMax {
 		return fmt.Errorf("could not send key event: invalid keycode '%d'", key);
 	}
-	iev := inputEvent{
-		Time:  syscall.Timeval{0, 0},
-		Type:  evKey,
-		Code:  uint16(key),
-		Value: int32(btnState)}
-	buf := new(bytes.Buffer)
-	err = binary.Write(buf, binary.LittleEndian, iev)
+	buf, err := inputEventToBuffer(evKey, uint16(key), int32(btnState))
 	if err != nil {
-		return fmt.Errorf("failed to write btnEvent struct to buffer: %v", err)
+		return fmt.Errorf("key event could not be set: %v", err)
 	}
-	_, err = deviceFile.Write(buf.Bytes())
+	_, err = deviceFile.Write(buf)
 	if err != nil {
 		return fmt.Errorf("writing btnEvent structure to the device file failed: %v", err)
 	}
@@ -174,16 +168,24 @@ func sendBtnEvent(deviceFile *os.File, key int, btnState int) (err error) {
 }
 
 func syncEvents(deviceFile *os.File) (err error) {
+	buf, err := inputEventToBuffer(evSyn, 0, int32(synReport))
+	if err != nil {
+		return fmt.Errorf("writing sync event failed: %v", err)
+	}
+	_, err = deviceFile.Write(buf)
+	return err
+}
+
+func inputEventToBuffer(evType uint16, evCode uint16, evValue int32)(buffer []byte, err error) {
 	iev := inputEvent{
-		Time:  syscall.Timeval{0, 0},
-		Type:  evSyn,
-		Code:  uint16(0),
-		Value: int32(synReport)}
+		Time: syscall.Timeval{0,0},
+		Type: evType,
+		Code: evCode,
+		Value: evValue}
 	buf := new(bytes.Buffer)
 	err = binary.Write(buf, binary.LittleEndian, iev)
 	if err != nil {
-		return fmt.Errorf("failed to write to buffer: %v", err)
+		return nil, fmt.Errorf("failed to write input event to buffer: %v", err)
 	}
-	_, err = deviceFile.Write(buf.Bytes())
-	return err
+	return buf.Bytes(), nil
 }
