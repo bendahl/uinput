@@ -1,0 +1,11 @@
+language: go
+
+go:
+  1.7.x
+
+dist: trusty
+sudo: required
+
+before install:
+  - sudo echo KERNEL==\"uinput\", GROUP=\"$USER\", MODE:=\"0660\" > /etc/udev/rules.d/99-$USER.rules
+  - sudo udevadm trigger
