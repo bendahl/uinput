@@ -7,5 +7,5 @@ dist: trusty
 sudo: required
 
 before_install:
-  - sudo echo KERNEL==\"uinput\", GROUP=\"$USER\", MODE:=\"0660\" > /etc/udev/rules.d/99-$USER.rules
+  - echo KERNEL==\"uinput\", GROUP=\"$USER\", MODE:=\"0660\" | sudo tee /etc/udev/rules.d/99-$USER.rules
   - sudo udevadm trigger
