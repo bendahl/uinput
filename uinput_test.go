@@ -56,3 +56,23 @@ func TestInvalidKeycode(t *testing.T) {
 
 	vk.Close()
 }
+
+// This test will create a basic Mouse, send an absolute axis event and close the device
+func TestBasicMouse(t *testing.T) {
+	relDev, err := CreateMouse("/dev/uinput", []byte("Test Basic Mouse"))
+	if err != nil {
+		t.Fatalf("Failed to create the virtual mouse. Last error was: %s\n", err)
+	}
+
+	err = relDev.MoveCursor(1000, 100)
+
+	if err != nil {
+		t.Fatalf("Failed to send key event. Last error was: %s\n", err)
+	}
+
+	err = relDev.Close()
+
+	if err != nil {
+		t.Fatalf("Failed to close device. Last error was: %s\n", err)
+	}
+}

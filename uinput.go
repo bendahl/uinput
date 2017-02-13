@@ -44,6 +44,46 @@ type vKeyboard struct {
 	deviceFile *os.File
 }
 
+// An Mouse is a device that will trigger an absolute change event.
+// For details see: https://www.kernel.org/doc/Documentation/input/event-codes.txt
+type Mouse interface {
+	MoveCursor(x, y int32) error
+
+	io.Closer
+}
+
+type vMouse struct {
+	name       []byte
+	deviceFile *os.File
+}
+
+func CreateMouse(path string, name []byte) (Mouse, error) {
+	if path == "" {
+		return nil, errors.New("device path must not be empty")
+	}
+	if len(name) > uinputMaxNameSize {
+		return nil, fmt.Errorf("device name %s is too long (maximum of %d characters allowed)", name, uinputMaxNameSize)
+	}
+
+	fd, err := createMouse(path, name)
+	if err != nil {
+		return nil, err
+	}
+
+	return vMouse{name: name, deviceFile: fd}, nil
+}
+
+// MoveCursor sets the absolute position of the device. Values will have to be within the boundaries specified during
+// intialization
+func (vAbs vMouse) MoveCursor(x, y int32) error {
+	return sendRelEvent(vAbs.deviceFile, x, y)
+}
+
+// Close closes the device and releases the
+func (vAbs vMouse) Close() error {
+	return closeDevice(vAbs.deviceFile)
+}
+
 // CreateKeyboard will create a new keyboard using the given uinput
 // device path of the uinput device.
 func CreateKeyboard(path string, name []byte) (Keyboard, error) {
