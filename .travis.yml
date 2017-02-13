@@ -7,5 +7,6 @@ dist: trusty
 sudo: required
 
 before install:
+  - sudo apt-get --yes install udev
   - sudo echo KERNEL==\"uinput\", GROUP=\"$USER\", MODE:=\"0660\" > /etc/udev/rules.d/99-$USER.rules
   - sudo udevadm trigger
