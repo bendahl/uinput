@@ -1,4 +1,4 @@
-Uinput
+Uinput [![Build Status](https://travis-ci.org/bendahl/uinput.svg?branch=master)](https://travis-ci.org/bendahl/uinput)
 ======
 
 This package provides pure go wrapper functions for the LINUX uinput device and therefore allows the creation of virtual input devices in userland. As it stands right now, only virtual keyboards are supported. Support for relative and absolute input devices will be added later on.
