@@ -4,23 +4,26 @@ import (
 	"testing"
 )
 
-// This test will create a basic VKeyboard, send a key command and then close the keyboard device
+// This test will confirm that all basic key events are working
 func TestBasicKeyboard(t *testing.T) {
 	vk, err := CreateKeyboard("/dev/uinput", []byte("Test Basic Keyboard"))
 	if err != nil {
 		t.Fatalf("Failed to create the virtual keyboard. Last error was: %s\n", err)
 	}
 
-	err = vk.SendKeyPress(Key1)
-
+	err = vk.KeyPress(Key1)
 	if err != nil {
-		t.Fatalf("Failed to send key event. Last error was: %s\n", err)
+		t.Fatalf("Failed to send key press. Last error was: %s\n", err)
 	}
 
-	err = vk.SendKeyRelease(Key1)
-
+	err = vk.KeyDown(Key1)
 	if err != nil {
-		t.Fatalf("Failed to send key event. Last error was: %s\n", err)
+		t.Fatalf("Failed to send key down event. Last error was: %s\n", err)
+	}
+
+	err = vk.KeyUp(Key1)
+	if err != nil {
+		t.Fatalf("Failed to send key up event. Last error was: %s\n", err)
 	}
 
 	err = vk.Close()
@@ -41,37 +44,44 @@ func TestInvalidDevicePath(t *testing.T) {
 	}
 }
 
-// This test will confirm that a proper error code is returned if an invalid keycode is
-// passed to the library
-func TestInvalidKeycode(t *testing.T) {
-	vk, err := CreateKeyboard("/dev/uinput", []byte("Test Keyboard"))
-	if err != nil {
-		t.Fatalf("Failed to create the virtual keyboard. Last error was: %s\n", err)
-	}
-
-	err = vk.SendKeyPress(4711)
-	if err == nil {
-		t.Fatalf("Sending an invalid keycode did not trigger an error.\n")
-	}
-
-	vk.Close()
-}
-
-// This test will create a basic Mouse, send an absolute axis event and close the device
-func TestBasicMouse(t *testing.T) {
+// This test confirms that all basic mouse events are working as expected.
+func TestBasicMouseMoves(t *testing.T) {
 	relDev, err := CreateMouse("/dev/uinput", []byte("Test Basic Mouse"))
 	if err != nil {
 		t.Fatalf("Failed to create the virtual mouse. Last error was: %s\n", err)
 	}
 
-	err = relDev.MoveCursor(1000, 100)
-
+	err = relDev.MoveLeft(100)
 	if err != nil {
-		t.Fatalf("Failed to send key event. Last error was: %s\n", err)
+		t.Fatalf("Failed to move mouse left. Last error was: %s\n", err)
+	}
+
+	err = relDev.MoveRight(150)
+	if err != nil {
+		t.Fatalf("Failed to move mouse right. Last error was: %s\n", err)
+	}
+
+	err = relDev.MoveUp(50)
+	if err != nil {
+		t.Fatalf("Failed to move mouse up. Last error was: %s\n", err)
+	}
+
+	err = relDev.MoveDown(100)
+	if err != nil {
+		t.Fatalf("Failed to move mouse down. Last error was: %s\n", err)
+	}
+
+	err = relDev.RightClick()
+	if err != nil {
+		t.Fatalf("Failed to perform right click. Last error was: %s\n", err)
+	}
+
+	err = relDev.LeftClick()
+	if err != nil {
+		t.Fatalf("Failed to perform right click. Last error was: %s\n", err)
 	}
 
 	err = relDev.Close()
-
 	if err != nil {
 		t.Fatalf("Failed to close device. Last error was: %s\n", err)
 	}

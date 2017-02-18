@@ -1,9 +1,14 @@
 Uinput [![Build Status](https://travis-ci.org/bendahl/uinput.svg?branch=master)](https://travis-ci.org/bendahl/uinput)
 ======
 
-This package provides pure go wrapper functions for the LINUX uinput device and therefore allows the creation of virtual input devices in userland. As it stands right now, only virtual keyboards are supported. Support for relative and absolute input devices will be added later on.
+This package provides pure go wrapper functions for the LINUX uinput device, which allows to create virtual input devices in userspace. At the moment this package offers a virtual keyboard implementation as well as a virtual mouse device. The keyboard can be used to either send single key presses or hold down a specified key and release it later (useful for building game controllers). The mouse device issues relative positional change events to the x and y asix of the mouse pointer and may also fire click events (left and right click). More functionality will be added in future version. 
 
-Please note that you will need to make sure to have the necessary rights to write to uinput. You can either chmod your uinput device, or add a rule in /etc/udev/rules.d to allow your user's group or a dedicated group to write to the device. An example file could be named "99-user.rules" and the line you would need to add for "user", belonging to the group "utest" would be <pre><code>KERNEL=="uinput", GROUP="utest", MODE:="0660"</code></pre> Also, make sure to restart in order for these settings to work. Which approach you'll take is up to you, although I would encourage the creation of a udev rule, as it is the clean approach.
+Please note that you will need to make sure to have the necessary rights to write to uinput. You can either chmod your uinput device, or add a rule in /etc/udev/rules.d to allow your user's group or a dedicated group to write to the device.
+You may use the following two commands to add the necessary rights for you current user to a file called 99-$USER.rules (where $USER is your current user's name):
+<pre><code>
+echo KERNEL==\"uinput\", GROUP=\"$USER\", MODE:=\"0660\" | sudo tee /etc/udev/rules.d/99-$USER.rules
+sudo udevadm trigger
+</code></pre>
 
 Installation
 -------------
@@ -13,7 +18,7 @@ License
 --------
 The package falls under the MIT license. Please see the "LICENSE" file for details.
 
-ToDos/ Open Issues
+ToDos
 ------------------
-The package is currently a work in progress and some more testing will need to be done. Also, as mentioned before, a few features will still need to be implemented as well. To get an idea of the things that are on the current todo list, check out the file "TODO.md". As always, helpful comments and ideas are always welcome. Feel free to do some testing on your own if you're up to it.
+Besides mouse and keyboard events it would be great to introduce an input device that allows absolute mouse pointer movements (similar to a touchpad). This still needs to be done. Also, all testing has been done on Ubunu 14.04 and 16.04 x86\_64. Testing for other platforms will need to be done. To get an idea of the things that are on the current todo list, check out the file "TODO.md". As always, helpful comments and ideas are always welcome. Feel free to do some testing on your own if you're up to it.
 
