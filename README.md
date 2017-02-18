@@ -1,5 +1,4 @@
 Uinput [![Build Status](https://travis-ci.org/bendahl/uinput.svg?branch=master)](https://travis-ci.org/bendahl/uinput) [![GoDoc](https://godoc.org/github.com/bendahl/uinput?status.png)](https://godoc.org/github.com/bendahl/uinput)
-
 ======
 
 This package provides pure go wrapper functions for the LINUX uinput device, which allows to create virtual input devices in userspace. At the moment this package offers a virtual keyboard implementation as well as a virtual mouse device. The keyboard can be used to either send single key presses or hold down a specified key and release it later (useful for building game controllers). The mouse device issues relative positional change events to the x and y asix of the mouse pointer and may also fire click events (left and right click). More functionality will be added in future version. 
