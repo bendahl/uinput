@@ -217,7 +217,7 @@ func createUsbDevice(deviceFile *os.File, dev uinputUserDev) (fd *os.File, err e
 
 func sendBtnEvent(deviceFile *os.File, key int, btnState int) (err error) {
 	buf, err := inputEventToBuffer(inputEvent{
-		Time:  syscall.Timeval{0, 0},
+		Time:  syscall.Timeval{Sec: 0, Usec: 0},
 		Type:  evKey,
 		Code:  uint16(key),
 		Value: int32(btnState)})
@@ -233,7 +233,7 @@ func sendBtnEvent(deviceFile *os.File, key int, btnState int) (err error) {
 
 func sendRelEvent(deviceFile *os.File, eventCode uint16, pixel int32) error {
 	iev := inputEvent{
-		Time:  syscall.Timeval{0, 0},
+		Time:  syscall.Timeval{Sec: 0, Usec: 0},
 		Type:  evRel,
 		Code:  eventCode,
 		Value: pixel}
@@ -253,7 +253,7 @@ func sendRelEvent(deviceFile *os.File, eventCode uint16, pixel int32) error {
 
 func syncEvents(deviceFile *os.File) (err error) {
 	buf, err := inputEventToBuffer(inputEvent{
-		Time:  syscall.Timeval{0, 0},
+		Time:  syscall.Timeval{Sec: 0, Usec: 0},
 		Type:  evSyn,
 		Code:  0,
 		Value: int32(synReport)})
