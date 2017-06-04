@@ -46,6 +46,33 @@ A virtual mouse input device is just as easy to create and use:
 		Example (trigger a right click):
 			err = vm.RightClick()
 
+	3. Close the device
+		Example: err = vm.Close()
+
+
+If you'd like to use absolute input events (move the cursor to specific positions on screen), use the touch pad.
+Note that you'll need to specify the size of the screen area you want to use when you initialize the
+device. Here are a few examples of how to use the virtual touch pad:
+
+	1. Initialize the device:
+		Example: vt, err := CreateTouchPad("/dev/uinput", "DontTouchThis", 0, 1024, 0, 768)
+
+	2. Move the cursor around and issue click events
+		Example (move cursor to the top left corner of the screen):
+			err = vt.MoveTo(0, 0)
+
+		Example (move cursor to the position x: 100, y: 250):
+			err = vt.MoveTo(100, 250)
+
+		Example (trigger a left click):
+			err = vt.LeftClick()
+
+		Example (trigger a right click):
+			err = vt.RightClick()
+
+	3. Close the device
+		Example: err = vt.Close()
+
 */
 package uinput
 
@@ -166,7 +193,8 @@ func (vTouch vTouchPad) LeftClick() error {
 	if err != nil {
 		return fmt.Errorf("sync to device file failed: %v", err)
 	}
-	return nil}
+	return nil
+}
 
 func (vTouch vTouchPad) RightClick() error {
 	err := sendBtnEvent(vTouch.deviceFile, evBtnRight, btnStatePressed)
