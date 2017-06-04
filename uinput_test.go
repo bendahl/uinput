@@ -93,13 +93,13 @@ func TestBasicTouchPadMoves(t *testing.T) {
 		t.Fatalf("Failed to create the virtual touch pad. Last error was: %s\n", err)
 	}
 
-	err = absDev.MoveTo(0,0)
+	err = absDev.MoveTo(0, 0)
 	if err != nil {
 		t.Fatalf("Failed to move cursor to initial position. Last error was: %s\n", err)
 	}
 
 	err = absDev.MoveTo(100, 200)
-	if (err != nil) {
+	if err != nil {
 		t.Fatalf("Failed to move cursor to position x:100, y:200. Last error was: %s\n", err)
 	}
 	err = absDev.RightClick()

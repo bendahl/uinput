@@ -135,7 +135,7 @@ type vMouse struct {
 	deviceFile *os.File
 }
 
-// A TouchPad is an input device that uses absolute axis events, meaning that you can specifiy
+// A TouchPad is an input device that uses absolute axis events, meaning that you can specify
 // the exact position the cursor should move to. Therefore, it is necessary to define the size
 // of the rectangle in which the cursor may move upon creation of the device.
 type TouchPad interface {
