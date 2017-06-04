@@ -140,6 +140,67 @@ func toUinputName(name []byte) (uinputName [uinputMaxNameSize]byte) {
 	return fixedSizeName
 }
 
+func createTouchPad(path string, name []byte, minX int32, maxX int32, minY int32, maxY int32) (fd *os.File, err error) {
+	deviceFile, err := createDeviceFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("could not create absolute axis input device: %v", err)
+	}
+
+	err = registerDevice(deviceFile, uintptr(evKey))
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to register key device: %v", err)
+	}
+	// register button events (in order to enable left and right click)
+	err = ioctl(deviceFile, uiSetKeyBit, uintptr(evBtnLeft))
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to register left click event: %v", err)
+	}
+	err = ioctl(deviceFile, uiSetKeyBit, uintptr(evBtnRight))
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to register right click event: %v", err)
+	}
+
+	err = registerDevice(deviceFile, uintptr(evAbs))
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to register absolute axis input device: %v", err)
+	}
+
+	// register x and y axis events
+	err = ioctl(deviceFile, uiSetAbsBit, uintptr(absX))
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to register absolute x axis events: %v", err)
+	}
+	err = ioctl(deviceFile, uiSetAbsBit, uintptr(absY))
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to register absolute y axis events: %v", err)
+	}
+
+	var absMin [absSize]int32
+	absMin[absX] = minX
+	absMin[absY] = minY
+
+	var absMax [absSize]int32
+	absMax[absX] = maxX
+	absMax[absY] = maxY
+
+	return createUsbDevice(deviceFile,
+		uinputUserDev{
+			Name: toUinputName(name),
+			ID: inputID{
+				Bustype: busUsb,
+				Vendor:  0x4711,
+				Product: 0x0817,
+				Version: 1},
+			Absmin: absMin,
+			Absmax: absMax})
+}
+
 func createMouse(path string, name []byte) (fd *os.File, err error) {
 	deviceFile, err := createDeviceFile(path)
 	if err != nil {
@@ -149,7 +210,7 @@ func createMouse(path string, name []byte) (fd *os.File, err error) {
 	err = registerDevice(deviceFile, uintptr(evKey))
 	if err != nil {
 		deviceFile.Close()
-		return nil, fmt.Errorf("failed to register virtual mouse device: %v", err)
+		return nil, fmt.Errorf("failed to register key device: %v", err)
 	}
 	// register button events (in order to enable left and right click)
 	err = ioctl(deviceFile, uiSetKeyBit, uintptr(evBtnLeft))
@@ -231,6 +292,31 @@ func sendBtnEvent(deviceFile *os.File, key int, btnState int) (err error) {
 	return err
 }
 
+func sendAbsEvent(deviceFile *os.File, xPos int32, yPos int32) error {
+	var ev [2]inputEvent
+	ev[0].Type = evAbs
+	ev[0].Code = absX
+	ev[0].Value = xPos
+
+	ev[1].Type = evAbs
+	ev[1].Code = absY
+	ev[1].Value = yPos
+
+	for _, iev := range ev {
+		buf, err := inputEventToBuffer(iev)
+		if err != nil {
+			return fmt.Errorf("writing abs event failed: %v", err)
+		}
+
+		_, err = deviceFile.Write(buf)
+		if err != nil {
+			return fmt.Errorf("failed to write abs event to device file: %v", err)
+		}
+	}
+
+	return syncEvents(deviceFile)
+}
+
 func sendRelEvent(deviceFile *os.File, eventCode uint16, pixel int32) error {
 	iev := inputEvent{
 		Time:  syscall.Timeval{Sec: 0, Usec: 0},
@@ -245,7 +331,7 @@ func sendRelEvent(deviceFile *os.File, eventCode uint16, pixel int32) error {
 
 	_, err = deviceFile.Write(buf)
 	if err != nil {
-		return fmt.Errorf("failed to write abs event to device file: %v", err)
+		return fmt.Errorf("failed to write rel event to device file: %v", err)
 	}
 
 	return syncEvents(deviceFile)
