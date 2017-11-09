@@ -356,7 +356,7 @@ func (vk vKeyboard) KeyDown(key int) error {
 // cases it is recommended to call this function immediately after the "KeyDown" function in order to only issue a
 // single key press.
 func (vk vKeyboard) KeyUp(key int) error {
-	err := sendBtnEvent(vk.deviceFile, key, btnStatePressed)
+	err := sendBtnEvent(vk.deviceFile, key, btnStateReleased)
 	if err != nil {
 		return fmt.Errorf("Failed to issue the KeyUp event: %v", err)
 	}
