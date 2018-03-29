@@ -127,6 +127,20 @@ type Mouse interface {
 	// RightClick will issue a right click.
 	RightClick() error
 
+	// LeftPress will simulate a press of the left mouse button. Note that the button will not be released until
+	// LeftRelease is invoked.
+	LeftPress() error
+
+	// LeftRelease will simulate the release of the left mouse button.
+	LeftRelease() error
+
+	// RightPress will simulate the press of the right mouse button. Note that the button will not be released until
+	// RightRelease is invoked.
+	RightPress() error
+
+	// RightRelease will simulate the release of the right mouse button.
+	RightRelease() error
+
 	io.Closer
 }
 
@@ -287,6 +301,60 @@ func (vRel vMouse) RightClick() error {
 		return fmt.Errorf("Failed to issue the KeyUp event: %v", err)
 	}
 
+	err = syncEvents(vRel.deviceFile)
+	if err != nil {
+		return fmt.Errorf("sync to device file failed: %v", err)
+	}
+	return nil
+}
+
+// LeftPress will simulate a press of the left mouse button. Note that the button will not be released until
+// LeftRelease is invoked.
+func (vRel vMouse) LeftPress() error {
+	err := sendBtnEvent(vRel.deviceFile, evBtnLeft, btnStatePressed)
+	if err != nil {
+		return fmt.Errorf("Failed press the left mouse button: %v", err)
+	}
+	err = syncEvents(vRel.deviceFile)
+	if err != nil {
+		return fmt.Errorf("sync to device file failed: %v", err)
+	}
+	return nil
+}
+
+// LeftRelease will simulate the release of the left mouse button.
+func (vRel vMouse) LeftRelease() error {
+	err := sendBtnEvent(vRel.deviceFile, evBtnLeft, btnStateReleased)
+	if err != nil {
+		return fmt.Errorf("Failed to release the left mouse button: %v", err)
+	}
+	err = syncEvents(vRel.deviceFile)
+	if err != nil {
+		return fmt.Errorf("sync to device file failed: %v", err)
+	}
+	return nil
+}
+
+// RightPress will simulate the press of the right mouse button. Note that the button will not be released until
+// RightRelease is invoked.
+func (vRel vMouse) RightPress() error {
+	err := sendBtnEvent(vRel.deviceFile, evBtnRight, btnStatePressed)
+	if err != nil {
+		return fmt.Errorf("Failed to press the right mouse button: %v", err)
+	}
+	err = syncEvents(vRel.deviceFile)
+	if err != nil {
+		return fmt.Errorf("sync to device file failed: %v", err)
+	}
+	return nil
+}
+
+// RightRelease will simulate the release of the right mouse button.
+func (vRel vMouse) RightRelease() error {
+	err := sendBtnEvent(vRel.deviceFile, evBtnRight, btnStateReleased)
+	if err != nil {
+		return fmt.Errorf("Failed to release the right mouse button: %v", err)
+	}
 	err = syncEvents(vRel.deviceFile)
 	if err != nil {
 		return fmt.Errorf("sync to device file failed: %v", err)

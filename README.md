@@ -4,10 +4,13 @@ Uinput [![Build Status](https://travis-ci.org/bendahl/uinput.svg?branch=master)]
 This package provides pure go wrapper functions for the LINUX uinput device, which allows to create virtual input devices 
 in userspace. At the moment this package offers a virtual keyboard implementation as well as a virtual mouse device and
 a touch pad device. 
+
+\
 The keyboard can be used to either send single key presses or hold down a specified key and release it later 
 (useful for building game controllers). The mouse device issues relative positional change events to the x and y axis 
-of the mouse pointer and may also fire click events (left and right click). More functionality will be added in future 
-version.
+of the mouse pointer and may also fire click events (left and right click). For implementing things like region selects
+via a virtual mouse pointer, press and release functions for the mouse device are also included.
+
 The touch pad, on the other hand can be used to move the mouse cursor to the specified position on the screen and to
 issue left and right clicks. Note that you'll need to specify the region size of your screen first though (happens during
 device creation).
@@ -31,11 +34,16 @@ License
 --------
 The package falls under the MIT license. Please see the "LICENSE" file for details.
 
-ToDos
-------------------
-All testing has been done on Ubunu 14.04 and 16.04 x86\_64. 
-Testing for other platforms will need to be done. 
-To get an idea of the things that are on the current todo list, check out the file "TODO.md". 
-As always, helpful comments and ideas are always welcome. 
-Feel free to do some testing on your own if you're up to it.
+TODO
+----
+Most functionality is implemented. However, more testing (including testing on different target
+platforms) is definitely an area for improvement.
+
+- [x] Create Tests for the uinput package
+- [x] Migrate code from C to GO
+- [x] Implement relative input
+- [x] Implement absolute input
+- [ ] Test on different platforms (besides x86_64)
+- [x] Implement functions to allow mouse button up and down events (for region selects)
+- [ ] Extend test cases
 
