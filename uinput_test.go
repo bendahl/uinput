@@ -132,6 +132,26 @@ func TestBasicTouchPadMoves(t *testing.T) {
 		t.Fatalf("Failed to perform right click. Last error was: %s\n", err)
 	}
 
+	err = absDev.LeftPress()
+	if err != nil {
+		t.Fatalf("Failed to perform left key press. Last error was: %s\n", err)
+	}
+
+	err = absDev.LeftRelease()
+	if err != nil {
+		t.Fatalf("Failed to perform left key release. Last error was: %s\n", err)
+	}
+
+	err = absDev.RightPress()
+	if err != nil {
+		t.Fatalf("Failed to perform right key press. Last error was: %s\n", err)
+	}
+
+	err = absDev.RightRelease()
+	if err != nil {
+		t.Fatalf("Failed to perform right key release. Last error was: %s\n", err)
+	}
+
 	err = absDev.Close()
 	if err != nil {
 		t.Fatalf("Failed to close device. Last error was: %s\n", err)
