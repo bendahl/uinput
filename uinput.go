@@ -241,6 +241,7 @@ func (vTouch vTouchPad) RightClick() error {
 	}
 	return nil
 }
+
 // LeftPress will simulate a press of the left mouse button. Note that the button will not be released until
 // LeftRelease is invoked.
 func (vTouch vTouchPad) LeftPress() error {
@@ -270,12 +271,12 @@ func (vTouch vTouchPad) LeftRelease() error {
 
 // RightPress will simulate the press of the right mouse button. Note that the button will not be released until
 // RightRelease is invoked.
-func (vRel vTouchPad) RightPress() error {
-	err := sendBtnEvent(vRel.deviceFile, evBtnRight, btnStatePressed)
+func (vTouch vTouchPad) RightPress() error {
+	err := sendBtnEvent(vTouch.deviceFile, evBtnRight, btnStatePressed)
 	if err != nil {
 		return fmt.Errorf("Failed to press the right mouse button: %v", err)
 	}
-	err = syncEvents(vRel.deviceFile)
+	err = syncEvents(vTouch.deviceFile)
 	if err != nil {
 		return fmt.Errorf("sync to device file failed: %v", err)
 	}
