@@ -5,7 +5,6 @@ This package provides pure go wrapper functions for the LINUX uinput device, whi
 in userspace. At the moment this package offers a virtual keyboard implementation as well as a virtual mouse device and
 a touch pad device. 
 
-\
 The keyboard can be used to either send single key presses or hold down a specified key and release it later 
 (useful for building game controllers). The mouse device issues relative positional change events to the x and y axis 
 of the mouse pointer and may also fire click events (left and right click). For implementing things like region selects
@@ -34,16 +33,25 @@ License
 --------
 The package falls under the MIT license. Please see the "LICENSE" file for details.
 
+Current Status
+--------------
+2018-03-31: I am happy to announce that v1.0.0! Go ahead and use this library in your own projects! Feedback is always welcome.
+
 TODO
 ----
-Most functionality is implemented. However, more testing (including testing on different target
-platforms) is definitely an area for improvement.
+The current API can be considered stable and the overall functionality (as originally envisioned) is complete. 
+Testing on x86_64 and ARM platforms (specifically the RaspberryPi) has been successful. If you'd like to use this library
+on a different platform that supports Linux, feel free to test it and share the results. This would be greatly appreciated.
+One thing that I'd still like to improve, however, are the test cases. The basic functionality is covered, but more extensive
+testing is something that needs to be worked on. 
 
 - [x] Create Tests for the uinput package
 - [x] Migrate code from C to GO
 - [x] Implement relative input
 - [x] Implement absolute input
-- [ ] Test on different platforms (besides x86_64)
+- [x] Test on different platforms
+    - [x] x86_64
+    - [x] ARMv6 (RaspberryPi)
 - [x] Implement functions to allow mouse button up and down events (for region selects)
 - [ ] Extend test cases
 
