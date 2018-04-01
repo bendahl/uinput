@@ -35,7 +35,7 @@ The package falls under the MIT license. Please see the "LICENSE" file for detai
 
 Current Status
 --------------
-2018-03-31: I am happy to announce that v1.0.0! Go ahead and use this library in your own projects! Feedback is always welcome.
+2018-03-31: I am happy to announce that v1.0.0 is finally out! Go ahead and use this library in your own projects! Feedback is always welcome.
 
 TODO
 ----
