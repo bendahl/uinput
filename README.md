@@ -29,6 +29,20 @@ Simply check out the repository and use the commands <pre><code>go build && go i
 The package will then be installed to your local respository, along with the package documentation. 
 The documentation contains more details on the usage of this package. 
 
+
+Alternatively, if you'd like to use a specific version/tag of this library, you may use the gopkg.in service.
+To get v.1.x.x (latest stable v1), simply enter this on your command line:
+
+<code>go get gopkg.in/bendahl/uinput.v1</code>
+
+To import this version in your code use:
+
+<code>import "gopkg.in/bendahl/uinput.v1"</code>
+
+You may then refer to it as "uinput" in your code. For further details see: https://gopkg.in/bendahl/uinput.v1
+
+Thanks to gopkg.in for offering this great service!
+
 License
 --------
 The package falls under the MIT license. Please see the "LICENSE" file for details.
