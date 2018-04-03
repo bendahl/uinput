@@ -1,4 +1,4 @@
-Uinput [![Build Status](https://travis-ci.org/bendahl/uinput.svg?branch=master)](https://travis-ci.org/bendahl/uinput) [![GoDoc](https://godoc.org/github.com/bendahl/uinput?status.png)](https://godoc.org/github.com/bendahl/uinput) [![Go Report Card](https://goreportcard.com/badge/github.com/bendahl/uinput)](https://goreportcard.com/report/github.com/bendahl/uinput)
+Uinput [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Build Status](https://travis-ci.org/bendahl/uinput.svg?branch=master)](https://travis-ci.org/bendahl/uinput) [![GoDoc](https://godoc.org/github.com/bendahl/uinput?status.png)](https://godoc.org/github.com/bendahl/uinput) [![Go Report Card](https://goreportcard.com/badge/github.com/bendahl/uinput)](https://goreportcard.com/report/github.com/bendahl/uinput)
 ====
 
 This package provides pure go wrapper functions for the LINUX uinput device, which allows to create virtual input devices 
@@ -42,6 +42,116 @@ To import this version in your code use:
 You may then refer to it as "uinput" in your code. For further details see: https://gopkg.in/bendahl/uinput.v1
 
 Thanks to gopkg.in for offering this great service!
+
+Usage
+-----
+The following section explains some common ways to use this lib.
+
+
+### Using the virtual keyboard device: 
+
+```go
+package main 
+
+import "github.com/bendahl/uinput"
+// alternatively (to use specific version), use this:
+//import "gopkg.in/bendahl/uinput.v1"
+
+func main() {
+	// initialize keyboard and check for possible errors
+	keyboard, err := uinput.CreateKeyboard("/dev/uinput", []byte("testkeyboard"))
+	if err != nil {
+		return
+	}
+	// always do this after the initialization in order to guarantee that the device will be properly closed
+	defer keyboard.Close()
+
+	// prints "a"
+	keyboard.KeyPress(uinput.KeyA)
+
+	// prints "A"
+	// Note that you could use caps lock instead of using shift with KeyDown and KeyUp
+	keyboard.KeyDown(uinput.KeyLeftshift)
+	keyboard.KeyPress(uinput.KeyA)
+	keyboard.KeyUp(uinput.KeyLeftshift)
+
+	// prints "00000"
+	for i := 0; i < 5; i++ {
+		keyboard.KeyPress(uinput.Key0)
+	}
+}
+```
+
+### Using the virtual mouse device:
+
+```go
+package main
+
+import "github.com/bendahl/uinput"
+// alternatively (to use specific version), use this:
+//import "gopkg.in/bendahl/uinput.v1"
+
+func main() {
+	// initialize mouse and check for possible errors
+	mouse, err := uinput.CreateMouse("/dev/uinput", []byte("testmouse"))
+	if err != nil {
+		return
+	}
+	// always do this after the initialization in order to guarantee that the device will be properly closed
+	defer mouse.Close()
+
+	// mouse pointer will be moved up by 10 pixels
+	mouse.MoveUp(10)
+	// mouse pointer will be moved to the right by 10 pixels
+	mouse.MoveRight(10)
+	// mouse pointer will be moved down by 10 pixels
+	mouse.MoveDown(10)
+	// mouse pointer will be moved to the left by 10 pixels (we're back to where we started)
+	mouse.MoveLeft(10)
+
+	// click left
+	mouse.LeftClick()
+	// click right (depending on context a context menu may appear)
+	mouse.RightClick()
+
+	// hold down left mouse button
+	mouse.LeftPress()
+	// move mouse pointer down by 100 pixels while holding down the left key
+	mouse.MoveDown(100)
+	// release the left mouse button
+	mouse.LeftRelease()
+}
+```
+
+### Using the virtual touch pad device:
+
+```go
+package main
+
+import "github.com/bendahl/uinput"
+// alternatively (to use specific version), use this:
+//import "gopkg.in/bendahl/uinput.v1"
+
+func main() {
+	// initialization of the touch device requires to set the screen boundaries
+	// min and max values for x and y axis need to be set (usually, 0 should be a sane lower bound)
+	touch, err := uinput.CreateTouchPad("/dev/uinput", []byte("testpad"), 0, 800, 0, 600)
+	if err != nil {
+		return
+	}
+	// always do this after the initialization in order to guarantee that the device will be properly closed
+	defer touch.Close()
+
+	// move pointer to the position 300, 200
+	touch.MoveTo(300, 200)
+	// press the left mouse key, holding it down
+	touch.LeftPress()
+	// move pointer to position 400, 400
+	touch.MoveTo(400, 400)
+	// release the left mouse key
+	touch.LeftRelease()
+}
+```
 
 License
 --------
