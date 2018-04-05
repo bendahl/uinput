@@ -184,6 +184,32 @@ type vTouchPad struct {
 	deviceFile *os.File
 }
 
+type TouchScreen interface {
+	Touch(x int32, y int32) error
+	io.Closer
+}
+
+type vTouchScreen struct {
+	name       []byte
+	deviceFile *os.File
+}
+
+func CreateTouchScreen(path string, name []byte, minX int32, maxX int32, minY int32, maxY int32) (TouchScreen, error) {
+	if path == "" {
+		return nil, errors.New("device path must not be empty")
+	}
+	if len(name) > uinputMaxNameSize {
+		return nil, fmt.Errorf("device name %s is too long (maximum of %d characters allowed)", name, uinputMaxNameSize)
+	}
+
+	fd, err := createTouchScreen(path, name, minX, maxX, minY, maxY)
+	if err != nil {
+		return nil, err
+	}
+
+	return vTouchScreen{name: name, deviceFile: fd}, nil
+}
+
 // CreateTouchPad will create a new touch pad device. note that you will need to define the x and y axis boundaries
 // (min and max) within which the cursor maybe moved around.
 func CreateTouchPad(path string, name []byte, minX int32, maxX int32, minY int32, maxY int32) (TouchPad, error) {
@@ -508,4 +534,20 @@ func (vk vKeyboard) KeyUp(key int) error {
 // It's usually a good idea to use defer to call this function.
 func (vk vKeyboard) Close() error {
 	return closeDevice(vk.deviceFile)
+}
+
+func (vts vTouchScreen) Touch(x int32, y int32) error {
+	sendEvent(vts.deviceFile, evAbs, 0x35, x)
+	sendEvent(vts.deviceFile, evAbs, 0x36, y)
+	sendEvent(vts.deviceFile, evSyn, 2, 0)
+	sendEvent(vts.deviceFile, evSyn, 0, 0)
+
+	sendEvent(vts.deviceFile, evSyn, 2, 0)
+	sendEvent(vts.deviceFile, evSyn, 0, 0)
+
+	return nil
+}
+
+func (vts vTouchScreen) Close() error {
+	return closeDevice(vts.deviceFile)
 }
