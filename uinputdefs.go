@@ -260,3 +260,36 @@ const (
 	AbsMtBblobID     = 56 /* Group a set of packets as a blob */
 	AbsMtTrackingID  = 57 /* Unique ID of initiated contact */
 )
+
+// types needed from uinput.h
+const (
+	uinputMaxNameSize = 80
+	uiDevCreate       = 0x5501
+	uiDevDestroy      = 0x5502
+	uiSetEvBit        = 0x40045564
+	uiSetKeyBit       = 0x40045565
+	uiSetRelBit       = 0x40045566
+	uiSetAbsBit       = 0x40045567
+	busUsb            = 0x03
+)
+
+// input event codes as specified in input-event-codes.h
+const (
+	evSyn      = 0x00
+	evKey      = 0x01
+	evRel      = 0x02
+	evAbs      = 0x03
+	relX       = 0x0
+	relY       = 0x1
+	absX       = 0x0
+	absY       = 0x1
+	synReport  = 0
+	evBtnLeft  = 0x110
+	evBtnRight = 0x111
+)
+
+const (
+	btnStateReleased = 0
+	btnStatePressed  = 1
+	absSize          = 64
+)
