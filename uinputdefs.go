@@ -247,3 +247,16 @@ const (
 	KeyMicmute          = 248 /*Mute/UnmuteTheMicrophone*/
 	keyMax              = 248 // highest key currently defined
 )
+
+const (
+	AbsMtTouchMajor  = 48 /* Major axis of touching ellipse */
+	AbsMtTouchMinor  = 49 /* Minor axis (omit if circular) */
+	AbsMtWidthMajor  = 50 /* Major axis of approaching ellipse */
+	AbsMtWidthMinor  = 51 /* Minor axis (omit if circular) */
+	AbsMtOrientation = 52 /* Ellipse orientation */
+	AbsMtPositionX   = 53 /* Center X ellipse position */
+	AbsMtPositionY   = 54 /* Center Y ellipse position */
+	AbsMtToolType    = 55 /* Type of touching device */
+	AbsMtBblobID     = 56 /* Group a set of packets as a blob */
+	AbsMtTrackingID  = 57 /* Unique ID of initiated contact */
+)
