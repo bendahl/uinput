@@ -10,39 +10,6 @@ import (
 	"time"
 )
 
-// types needed from uinput.h
-const (
-	uinputMaxNameSize = 80
-	uiDevCreate       = 0x5501
-	uiDevDestroy      = 0x5502
-	uiSetEvBit        = 0x40045564
-	uiSetKeyBit       = 0x40045565
-	uiSetRelBit       = 0x40045566
-	uiSetAbsBit       = 0x40045567
-	busUsb            = 0x03
-)
-
-// input event codes as specified in input-event-codes.h
-const (
-	evSyn      = 0x00
-	evKey      = 0x01
-	evRel      = 0x02
-	evAbs      = 0x03
-	relX       = 0x0
-	relY       = 0x1
-	absX       = 0x0
-	absY       = 0x1
-	synReport  = 0
-	evBtnLeft  = 0x110
-	evBtnRight = 0x111
-)
-
-const (
-	btnStateReleased = 0
-	btnStatePressed  = 1
-	absSize          = 64
-)
-
 type inputID struct {
 	Bustype uint16
 	Vendor  uint16
@@ -201,6 +168,64 @@ func createTouchPad(path string, name []byte, minX int32, maxX int32, minY int32
 			Absmax: absMax})
 }
 
+func createTouchScreen(path string, name []byte, minX int32, maxX int32, minY int32, maxY int32) (fd *os.File, err error) {
+	deviceFile, err := createDeviceFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("could not create absolute axis input device: %v", err)
+	}
+
+	BTN_TOUCH := 0x14a
+
+	err = registerDevice(deviceFile, uintptr(evKey))
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to register key device: %v", err)
+	}
+
+	var uinp uinputUserDev
+
+	uinp.Name = toUinputName([]byte(name))
+	uinp.ID.Version = 4
+	uinp.ID.Bustype = 0x6 //busUsb
+	uinp.ID.Vendor = 0x4711
+	uinp.ID.Product = 0x0817
+
+	uinp.Absmin[AbsMtPositionX] = minX // screen dimension
+	uinp.Absmax[AbsMtPositionX] = maxX // screen dimension
+	uinp.Absmin[AbsMtPositionY] = minY // screen dimension
+	uinp.Absmax[AbsMtPositionY] = maxY // screen dimension
+
+	err = ioctl(deviceFile, uiSetEvBit, uintptr(evAbs))
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to register absolute x axis events 2: %v", err)
+	}
+	err = ioctl(deviceFile, uiSetKeyBit, uintptr(BTN_TOUCH))
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to register absolute x axis events 3: %v", err)
+	}
+
+	err = ioctl(deviceFile, uiSetAbsBit, uintptr(AbsMtPositionX))
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to register absolute x axis events 4: %v", err)
+	}
+
+	err = ioctl(deviceFile, uiSetAbsBit, uintptr(AbsMtPositionY))
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to register absolute x axis events 5: %v", err)
+	}
+
+	return createUsbDevice(deviceFile,
+		uinputUserDev{
+			Name:   toUinputName(name),
+			ID:     uinp.ID,
+			Absmin: uinp.Absmin,
+			Absmax: uinp.Absmax})
+}
+
 func createMouse(path string, name []byte) (fd *os.File, err error) {
 	deviceFile, err := createDeviceFile(path)
 	if err != nil {
@@ -348,6 +373,26 @@ func syncEvents(deviceFile *os.File) (err error) {
 	}
 	_, err = deviceFile.Write(buf)
 	return err
+}
+
+func sendEvent(deviceFile *os.File, eventType uint16, eventCode uint16, eventValue int32) error {
+	iev := inputEvent{
+		Time:  syscall.Timeval{Sec: 0, Usec: 0},
+		Type:  eventType,
+		Code:  eventCode,
+		Value: eventValue}
+
+	buf, err := inputEventToBuffer(iev)
+	if err != nil {
+		return fmt.Errorf("writing abs event failed: %v", err)
+	}
+
+	_, err = deviceFile.Write(buf)
+	if err != nil {
+		return fmt.Errorf("failed to write rel event to device file: %v", err)
+	}
+
+	return nil
 }
 
 func inputEventToBuffer(iev inputEvent) (buffer []byte, err error) {
