@@ -77,7 +77,6 @@ device. Here are a few examples of how to use the virtual touch pad:
 package uinput
 
 import (
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -187,12 +186,8 @@ type vTouchPad struct {
 // CreateTouchPad will create a new touch pad device. note that you will need to define the x and y axis boundaries
 // (min and max) within which the cursor maybe moved around.
 func CreateTouchPad(path string, name []byte, minX int32, maxX int32, minY int32, maxY int32) (TouchPad, error) {
-	if path == "" {
-		return nil, errors.New("device path must not be empty")
-	}
-	if len(name) > uinputMaxNameSize {
-		return nil, fmt.Errorf("device name %s is too long (maximum of %d characters allowed)", name, uinputMaxNameSize)
-	}
+	validateDevicePath(path)
+	validateUinputName(name)
 
 	fd, err := createTouchPad(path, name, minX, maxX, minY, maxY)
 	if err != nil {
@@ -303,12 +298,8 @@ func (vTouch vTouchPad) Close() error {
 // CreateMouse will create a new mouse input device. A mouse is a device that allows relative input.
 // Relative input means that all changes to the x and y coordinates of the mouse pointer will be
 func CreateMouse(path string, name []byte) (Mouse, error) {
-	if path == "" {
-		return nil, errors.New("device path must not be empty")
-	}
-	if len(name) > uinputMaxNameSize {
-		return nil, fmt.Errorf("device name %s is too long (maximum of %d characters allowed)", name, uinputMaxNameSize)
-	}
+	validateDevicePath(path)
+	validateUinputName(name)
 
 	fd, err := createMouse(path, name)
 	if err != nil {
@@ -438,12 +429,8 @@ func (vRel vMouse) Close() error {
 // CreateKeyboard will create a new keyboard using the given uinput
 // device path of the uinput device.
 func CreateKeyboard(path string, name []byte) (Keyboard, error) {
-	if path == "" {
-		return nil, errors.New("device path must not be empty")
-	}
-	if len(name) > uinputMaxNameSize {
-		return nil, fmt.Errorf("device name %s is too long (maximum of %d characters allowed)", name, uinputMaxNameSize)
-	}
+	validateDevicePath(path)
+	validateUinputName(name)
 
 	fd, err := createVKeyboardDevice(path, name)
 	if err != nil {
@@ -508,4 +495,16 @@ func (vk vKeyboard) KeyUp(key int) error {
 // It's usually a good idea to use defer to call this function.
 func (vk vKeyboard) Close() error {
 	return closeDevice(vk.deviceFile)
+}
+
+func validateDevicePath(path string) {
+	if path == "" {
+		panic("device path must not be empty")
+	}
+}
+
+func validateUinputName(name []byte) {
+	if len(name) > uinputMaxNameSize {
+		panic(fmt.Sprintf("device name %s is too long (maximum of %d characters allowed)", name, uinputMaxNameSize))
+	}
 }
