@@ -1,9 +1,9 @@
 package uinput
 
 import (
+	"fmt"
 	"io"
 	"os"
-	"fmt"
 )
 
 // A Mouse is a device that will trigger an absolute change event.

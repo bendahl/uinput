@@ -8,7 +8,7 @@ func TestValidateDevicePathEmptyPathPanics(t *testing.T) {
 		if r := recover(); r != nil {
 			actual := r.(string)
 			if actual != expected {
-				t.Fatalf("Expected: %s\nActual: %s", expected, actual )
+				t.Fatalf("Expected: %s\nActual: %s", expected, actual)
 			}
 		}
 	}()
@@ -23,7 +23,7 @@ func TestValidateDevicePathInvalidPathPanics(t *testing.T) {
 		if r := recover(); r != nil {
 			actual := r.(string)
 			if actual != expected {
-				t.Fatalf("Expected: %s\nActual: %s", expected, actual )
+				t.Fatalf("Expected: %s\nActual: %s", expected, actual)
 			}
 		}
 	}()

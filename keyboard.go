@@ -1,9 +1,9 @@
 package uinput
 
 import (
+	"fmt"
 	"io"
 	"os"
-	"fmt"
 )
 
 // A Keyboard is an key event output device. It is used to
