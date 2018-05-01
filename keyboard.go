@@ -45,14 +45,17 @@ func CreateKeyboard(path string, name []byte) (Keyboard, error) {
 
 // KeyPress will issue a single key press (push down a key and then immediately release it).
 func (vk vKeyboard) KeyPress(key int) error {
+	if !keyCodeInRange(key) {
+		return fmt.Errorf("failed to perform KeyPress. Code %d is not in range", key)
+	}
 	err := sendBtnEvent(vk.deviceFile, key, btnStatePressed)
 	if err != nil {
-		return fmt.Errorf("Failed to issue the KeyDown event: %v", err)
+		return fmt.Errorf("failed to issue the KeyDown event: %v", err)
 	}
 
 	err = sendBtnEvent(vk.deviceFile, key, btnStateReleased)
 	if err != nil {
-		return fmt.Errorf("Failed to issue the KeyUp event: %v", err)
+		return fmt.Errorf("failed to issue the KeyUp event: %v", err)
 	}
 
 	err = syncEvents(vk.deviceFile)
@@ -66,9 +69,12 @@ func (vk vKeyboard) KeyPress(key int) error {
 // event is sent to the device, the key will remain pressed and therefore input will continuously be generated. Therefore,
 // do not forget to call "KeyUp" afterwards.
 func (vk vKeyboard) KeyDown(key int) error {
+	if !keyCodeInRange(key) {
+		return fmt.Errorf("failed to perform KeyDown. Code %d is not in range", key)
+	}
 	err := sendBtnEvent(vk.deviceFile, key, btnStatePressed)
 	if err != nil {
-		return fmt.Errorf("Failed to issue the KeyDown event: %v", err)
+		return fmt.Errorf("failed to issue the KeyDown event: %v", err)
 	}
 
 	err = syncEvents(vk.deviceFile)
@@ -82,9 +88,13 @@ func (vk vKeyboard) KeyDown(key int) error {
 // cases it is recommended to call this function immediately after the "KeyDown" function in order to only issue a
 // single key press.
 func (vk vKeyboard) KeyUp(key int) error {
+	if !keyCodeInRange(key) {
+		return fmt.Errorf("failed to perform KeyUp. Code %d is not in range", key)
+	}
+
 	err := sendBtnEvent(vk.deviceFile, key, btnStateReleased)
 	if err != nil {
-		return fmt.Errorf("Failed to issue the KeyUp event: %v", err)
+		return fmt.Errorf("failed to issue the KeyUp event: %v", err)
 	}
 
 	err = syncEvents(vk.deviceFile)
@@ -129,4 +139,8 @@ func createVKeyboardDevice(path string, name []byte) (fd *os.File, err error) {
 				Vendor:  0x4711,
 				Product: 0x0815,
 				Version: 1}})
+}
+
+func keyCodeInRange(key int) bool {
+	return key >= keyReserved && key <= keyMax
 }
