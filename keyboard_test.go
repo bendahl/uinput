@@ -68,6 +68,43 @@ func TestKeyOutsideOfRangeKeyPressFails(t *testing.T) {
 	}
 
 }
+func TestKeyOutsideOfRangeKeyUpFails(t *testing.T) {
+	vk, err := CreateKeyboard("/dev/uinput", []byte("Test Basic Keyboard"))
+	if err != nil {
+		t.Fatalf("Failed to create the virtual keyboard. Last error was: %s\n", err)
+	}
+	defer vk.Close()
+
+	err = vk.KeyUp(249)
+	if err == nil {
+		t.Fatalf("Expected key press to fail due to invalid key code, but got no error.")
+	}
+
+	err = vk.KeyUp(-1)
+	if err == nil {
+		t.Fatalf("Expected key press to fail due to invalid key code, but got no error.")
+	}
+
+}
+
+func TestKeyOutsideOfRangeKeyDownFails(t *testing.T) {
+	vk, err := CreateKeyboard("/dev/uinput", []byte("Test Basic Keyboard"))
+	if err != nil {
+		t.Fatalf("Failed to create the virtual keyboard. Last error was: %s\n", err)
+	}
+	defer vk.Close()
+
+	err = vk.KeyDown(249)
+	if err == nil {
+		t.Fatalf("Expected key press to fail due to invalid key code, but got no error.")
+	}
+
+	err = vk.KeyDown(-1)
+	if err == nil {
+		t.Fatalf("Expected key press to fail due to invalid key code, but got no error.")
+	}
+
+}
 
 func TestKeyPressFailsIfDeviceIsClosed(t *testing.T) {
 	vk, err := CreateKeyboard("/dev/uinput", []byte("Test Basic Keyboard"))
