@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"syscall"
 )
 
 // A Mouse is a device that will trigger an absolute change event.
@@ -178,4 +179,75 @@ func (vRel vMouse) RightRelease() error {
 // Close closes the device and releases the device.
 func (vRel vMouse) Close() error {
 	return closeDevice(vRel.deviceFile)
+}
+
+func createMouse(path string, name []byte) (fd *os.File, err error) {
+	deviceFile, err := createDeviceFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("could not create relative axis input device: %v", err)
+	}
+
+	err = registerDevice(deviceFile, uintptr(evKey))
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to register key device: %v", err)
+	}
+	// register button events (in order to enable left and right click)
+	err = ioctl(deviceFile, uiSetKeyBit, uintptr(evBtnLeft))
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to register left click event: %v", err)
+	}
+	err = ioctl(deviceFile, uiSetKeyBit, uintptr(evBtnRight))
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to register right click event: %v", err)
+	}
+
+	err = registerDevice(deviceFile, uintptr(evRel))
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to register relative axis input device: %v", err)
+	}
+
+	// register x and y axis events
+	err = ioctl(deviceFile, uiSetRelBit, uintptr(relX))
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to register relative x axis events: %v", err)
+	}
+	err = ioctl(deviceFile, uiSetRelBit, uintptr(relY))
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to register relative y axis events: %v", err)
+	}
+
+	return createUsbDevice(deviceFile,
+		uinputUserDev{
+			Name: toUinputName(name),
+			ID: inputID{
+				Bustype: busUsb,
+				Vendor:  0x4711,
+				Product: 0x0816,
+				Version: 1}})
+}
+
+func sendRelEvent(deviceFile *os.File, eventCode uint16, pixel int32) error {
+	iev := inputEvent{
+		Time:  syscall.Timeval{Sec: 0, Usec: 0},
+		Type:  evRel,
+		Code:  eventCode,
+		Value: pixel}
+
+	buf, err := inputEventToBuffer(iev)
+	if err != nil {
+		return fmt.Errorf("writing abs event failed: %v", err)
+	}
+
+	_, err = deviceFile.Write(buf)
+	if err != nil {
+		return fmt.Errorf("failed to write rel event to device file: %v", err)
+	}
+
+	return syncEvents(deviceFile)
 }

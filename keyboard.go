@@ -13,12 +13,12 @@ type Keyboard interface {
 	KeyPress(key int) error
 
 	// KeyDown will send a keypress event to an existing keyboard device.
-	// The key can be any of the predefined keycodes from uinputdefs.
+	// The key can be any of the predefined keycodes from keycodes.go.
 	// Note that the key will be "held down" until "KeyUp" is called.
 	KeyDown(key int) error
 
 	// KeyUp will send a keyrelease event to an existing keyboard device.
-	// The key can be any of the predefined keycodes from uinputdefs.
+	// The key can be any of the predefined keycodes from keycodes.go.
 	KeyUp(key int) error
 
 	io.Closer
@@ -62,7 +62,7 @@ func (vk vKeyboard) KeyPress(key int) error {
 	return nil
 }
 
-// KeyDown will send the key code passed (see uinputdefs.go for available keycodes). Note that unless a key release
+// KeyDown will send the key code passed (see keycodes.go for available keycodes). Note that unless a key release
 // event is sent to the device, the key will remain pressed and therefore input will continuously be generated. Therefore,
 // do not forget to call "KeyUp" afterwards.
 func (vk vKeyboard) KeyDown(key int) error {
@@ -78,7 +78,7 @@ func (vk vKeyboard) KeyDown(key int) error {
 	return nil
 }
 
-// KeyUp will release the given key passed as a parameter (see uinputdefs.go for available keycodes). In most
+// KeyUp will release the given key passed as a parameter (see keycodes.go for available keycodes). In most
 // cases it is recommended to call this function immediately after the "KeyDown" function in order to only issue a
 // single key press.
 func (vk vKeyboard) KeyUp(key int) error {
@@ -98,4 +98,35 @@ func (vk vKeyboard) KeyUp(key int) error {
 // It's usually a good idea to use defer to call this function.
 func (vk vKeyboard) Close() error {
 	return closeDevice(vk.deviceFile)
+}
+
+func createVKeyboardDevice(path string, name []byte) (fd *os.File, err error) {
+	deviceFile, err := createDeviceFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create virtual keyboard device: %v", err)
+	}
+
+	err = registerDevice(deviceFile, uintptr(evKey))
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to register virtual keyboard device: %v", err)
+	}
+
+	// register key events
+	for i := 0; i < keyMax; i++ {
+		err = ioctl(deviceFile, uiSetKeyBit, uintptr(i))
+		if err != nil {
+			deviceFile.Close()
+			return nil, fmt.Errorf("failed to register key number %d: %v", i, err)
+		}
+	}
+
+	return createUsbDevice(deviceFile,
+		uinputUserDev{
+			Name: toUinputName(name),
+			ID: inputID{
+				Bustype: busUsb,
+				Vendor:  0x4711,
+				Product: 0x0815,
+				Version: 1}})
 }

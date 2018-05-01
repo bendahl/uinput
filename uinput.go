@@ -77,8 +77,13 @@ device. Here are a few examples of how to use the virtual touch pad:
 package uinput
 
 import (
+	"bytes"
+	"encoding/binary"
+	"errors"
 	"fmt"
 	"os"
+	"syscall"
+	"time"
 )
 
 func validateDevicePath(path string) {
@@ -95,4 +100,117 @@ func validateUinputName(name []byte) {
 	if len(name) > uinputMaxNameSize {
 		panic(fmt.Sprintf("device name %s is too long (maximum of %d characters allowed)", name, uinputMaxNameSize))
 	}
+}
+
+func toUinputName(name []byte) (uinputName [uinputMaxNameSize]byte) {
+	var fixedSizeName [uinputMaxNameSize]byte
+	copy(fixedSizeName[:], name)
+	return fixedSizeName
+}
+
+func createDeviceFile(path string) (fd *os.File, err error) {
+	deviceFile, err := os.OpenFile(path, syscall.O_WRONLY|syscall.O_NONBLOCK, 0660)
+	if err != nil {
+		return nil, errors.New("could not open device file")
+	}
+	return deviceFile, err
+}
+
+func registerDevice(deviceFile *os.File, evType uintptr) error {
+	err := ioctl(deviceFile, uiSetEvBit, evType)
+	if err != nil {
+		err = releaseDevice(deviceFile)
+		if err != nil {
+			deviceFile.Close()
+			return fmt.Errorf("failed to close device: %v", err)
+		}
+		deviceFile.Close()
+		return fmt.Errorf("invalid file handle returned from ioctl: %v", err)
+	}
+	return nil
+}
+
+func createUsbDevice(deviceFile *os.File, dev uinputUserDev) (fd *os.File, err error) {
+	buf := new(bytes.Buffer)
+	err = binary.Write(buf, binary.LittleEndian, dev)
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to write user device buffer: %v", err)
+	}
+	_, err = deviceFile.Write(buf.Bytes())
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to write uidev struct to device file: %v", err)
+	}
+
+	err = ioctl(deviceFile, uiDevCreate, uintptr(0))
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to create device: %v", err)
+	}
+
+	time.Sleep(time.Millisecond * 200)
+
+	return deviceFile, err
+}
+
+func closeDevice(deviceFile *os.File) (err error) {
+	err = releaseDevice(deviceFile)
+	if err != nil {
+		return fmt.Errorf("failed to close device: %v", err)
+	}
+	return deviceFile.Close()
+}
+
+func releaseDevice(deviceFile *os.File) (err error) {
+	return ioctl(deviceFile, uiDevDestroy, uintptr(0))
+}
+
+// Note that mice and touch pads do have buttons as well. Therefore, this function is used
+// by all currently available devices and resides in the main source file.
+func sendBtnEvent(deviceFile *os.File, key int, btnState int) (err error) {
+	buf, err := inputEventToBuffer(inputEvent{
+		Time:  syscall.Timeval{Sec: 0, Usec: 0},
+		Type:  evKey,
+		Code:  uint16(key),
+		Value: int32(btnState)})
+	if err != nil {
+		return fmt.Errorf("key event could not be set: %v", err)
+	}
+	_, err = deviceFile.Write(buf)
+	if err != nil {
+		return fmt.Errorf("writing btnEvent structure to the device file failed: %v", err)
+	}
+	return err
+}
+
+func syncEvents(deviceFile *os.File) (err error) {
+	buf, err := inputEventToBuffer(inputEvent{
+		Time:  syscall.Timeval{Sec: 0, Usec: 0},
+		Type:  evSyn,
+		Code:  0,
+		Value: int32(synReport)})
+	if err != nil {
+		return fmt.Errorf("writing sync event failed: %v", err)
+	}
+	_, err = deviceFile.Write(buf)
+	return err
+}
+
+func inputEventToBuffer(iev inputEvent) (buffer []byte, err error) {
+	buf := new(bytes.Buffer)
+	err = binary.Write(buf, binary.LittleEndian, iev)
+	if err != nil {
+		return nil, fmt.Errorf("failed to write input event to buffer: %v", err)
+	}
+	return buf.Bytes(), nil
+}
+
+// original function taken from: https://github.com/tianon/debian-golang-pty/blob/master/ioctl.go
+func ioctl(deviceFile *os.File, cmd, ptr uintptr) error {
+	_, _, errorCode := syscall.Syscall(syscall.SYS_IOCTL, deviceFile.Fd(), cmd, ptr)
+	if errorCode != 0 {
+		return errorCode
+	}
+	return nil
 }
