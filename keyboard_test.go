@@ -1,6 +1,9 @@
 package uinput
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 // This test will confirm that basic key events are working.
 // Note that only Key1 is used here, as the purpose of this test is to ensure that the event handling for
@@ -48,6 +51,50 @@ func TestKeysInValidRangeWork(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to close device. Last error was: %s\n", err)
 	}
+}
+
+func TestKeyboardCreationFailsOnEmptyPath(t *testing.T) {
+	expected := "device path must not be empty"
+	defer func() {
+		if r := recover(); r != nil {
+			actual := r.(string)
+			if actual != expected {
+				t.Fatalf("Expected: %s\nActual: %s", expected, actual)
+			}
+		}
+	}()
+	CreateKeyboard("", []byte("KeyboardDevice"))
+	t.Fatalf("Empty path did not yield a panic")
+}
+
+func TestKeyboardCreationFailsOnNonExistentPathName(t *testing.T) {
+	path := "/some/bogus/path"
+	expected := "device path '" + path + "' does not exist"
+	defer func() {
+		if r := recover(); r != nil {
+			actual := r.(string)
+			if actual != expected {
+				t.Fatalf("Expected: %s\nActual: %s", expected, actual)
+			}
+		}
+	}()
+	CreateKeyboard(path, []byte("KeyboardDevice"))
+	t.Fatalf("Invalid path did not yield a panic")
+}
+
+func TestKeyboardCreationFailsIfNameIsTooLong(t *testing.T) {
+	name := "adsfdsferqewoirueworiuejdsfjdfa;ljoewrjeworiewuoruew;rj;kdlfjoeai;jfewoaifjef;das"
+	expected := fmt.Sprintf("device name %s is too long (maximum of %d characters allowed)", name, uinputMaxNameSize)
+	defer func() {
+		if r := recover(); r != nil {
+			actual := r.(string)
+			if actual != expected {
+				t.Fatalf("Expected: %s\nActual: %s", expected, actual)
+			}
+		}
+	}()
+	CreateKeyboard("/dev/uinput", []byte(name))
+	t.Fatalf("Invalid name did not yield a panic")
 }
 
 func TestKeyOutsideOfRangeKeyPressFails(t *testing.T) {
