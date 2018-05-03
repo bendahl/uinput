@@ -70,11 +70,7 @@ func (vTouch vTouchPad) LeftClick() error {
 		return fmt.Errorf("Failed to issue the KeyUp event: %v", err)
 	}
 
-	err = syncEvents(vTouch.deviceFile)
-	if err != nil {
-		return fmt.Errorf("sync to device file failed: %v", err)
-	}
-	return nil
+	return syncEvents(vTouch.deviceFile)
 }
 
 func (vTouch vTouchPad) RightClick() error {
@@ -88,11 +84,7 @@ func (vTouch vTouchPad) RightClick() error {
 		return fmt.Errorf("Failed to issue the KeyUp event: %v", err)
 	}
 
-	err = syncEvents(vTouch.deviceFile)
-	if err != nil {
-		return fmt.Errorf("sync to device file failed: %v", err)
-	}
-	return nil
+	return syncEvents(vTouch.deviceFile)
 }
 
 // LeftPress will simulate a press of the left mouse button. Note that the button will not be released until
@@ -102,11 +94,7 @@ func (vTouch vTouchPad) LeftPress() error {
 	if err != nil {
 		return fmt.Errorf("Failed press the left mouse button: %v", err)
 	}
-	err = syncEvents(vTouch.deviceFile)
-	if err != nil {
-		return fmt.Errorf("sync to device file failed: %v", err)
-	}
-	return nil
+	return syncEvents(vTouch.deviceFile)
 }
 
 // LeftRelease will simulate the release of the left mouse button.
@@ -115,11 +103,7 @@ func (vTouch vTouchPad) LeftRelease() error {
 	if err != nil {
 		return fmt.Errorf("Failed to release the left mouse button: %v", err)
 	}
-	err = syncEvents(vTouch.deviceFile)
-	if err != nil {
-		return fmt.Errorf("sync to device file failed: %v", err)
-	}
-	return nil
+	return syncEvents(vTouch.deviceFile)
 }
 
 // RightPress will simulate the press of the right mouse button. Note that the button will not be released until
@@ -129,11 +113,7 @@ func (vTouch vTouchPad) RightPress() error {
 	if err != nil {
 		return fmt.Errorf("Failed to press the right mouse button: %v", err)
 	}
-	err = syncEvents(vTouch.deviceFile)
-	if err != nil {
-		return fmt.Errorf("sync to device file failed: %v", err)
-	}
-	return nil
+	return syncEvents(vTouch.deviceFile)
 }
 
 // RightRelease will simulate the release of the right mouse button.
@@ -142,11 +122,7 @@ func (vTouch vTouchPad) RightRelease() error {
 	if err != nil {
 		return fmt.Errorf("Failed to release the right mouse button: %v", err)
 	}
-	err = syncEvents(vTouch.deviceFile)
-	if err != nil {
-		return fmt.Errorf("sync to device file failed: %v", err)
-	}
-	return nil
+	return syncEvents(vTouch.deviceFile)
 }
 
 func (vTouch vTouchPad) Close() error {

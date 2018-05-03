@@ -58,11 +58,7 @@ func (vk vKeyboard) KeyPress(key int) error {
 		return fmt.Errorf("failed to issue the KeyUp event: %v", err)
 	}
 
-	err = syncEvents(vk.deviceFile)
-	if err != nil {
-		return fmt.Errorf("sync to device file failed: %v", err)
-	}
-	return nil
+	return syncEvents(vk.deviceFile)
 }
 
 // KeyDown will send the key code passed (see keycodes.go for available keycodes). Note that unless a key release
@@ -77,11 +73,7 @@ func (vk vKeyboard) KeyDown(key int) error {
 		return fmt.Errorf("failed to issue the KeyDown event: %v", err)
 	}
 
-	err = syncEvents(vk.deviceFile)
-	if err != nil {
-		return fmt.Errorf("sync to device file failed: %v", err)
-	}
-	return nil
+	return syncEvents(vk.deviceFile)
 }
 
 // KeyUp will release the given key passed as a parameter (see keycodes.go for available keycodes). In most
@@ -97,11 +89,7 @@ func (vk vKeyboard) KeyUp(key int) error {
 		return fmt.Errorf("failed to issue the KeyUp event: %v", err)
 	}
 
-	err = syncEvents(vk.deviceFile)
-	if err != nil {
-		return fmt.Errorf("sync to device file failed: %v", err)
-	}
-	return nil
+	return syncEvents(vk.deviceFile)
 }
 
 // Close will close the device and free resources.

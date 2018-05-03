@@ -96,11 +96,7 @@ func (vRel vMouse) LeftClick() error {
 		return fmt.Errorf("Failed to issue the KeyUp event: %v", err)
 	}
 
-	err = syncEvents(vRel.deviceFile)
-	if err != nil {
-		return fmt.Errorf("sync to device file failed: %v", err)
-	}
-	return nil
+	return syncEvents(vRel.deviceFile)
 }
 
 // RightClick will issue a RightClick
@@ -115,11 +111,7 @@ func (vRel vMouse) RightClick() error {
 		return fmt.Errorf("Failed to issue the KeyUp event: %v", err)
 	}
 
-	err = syncEvents(vRel.deviceFile)
-	if err != nil {
-		return fmt.Errorf("sync to device file failed: %v", err)
-	}
-	return nil
+	return syncEvents(vRel.deviceFile)
 }
 
 // LeftPress will simulate a press of the left mouse button. Note that the button will not be released until
@@ -129,11 +121,7 @@ func (vRel vMouse) LeftPress() error {
 	if err != nil {
 		return fmt.Errorf("Failed press the left mouse button: %v", err)
 	}
-	err = syncEvents(vRel.deviceFile)
-	if err != nil {
-		return fmt.Errorf("sync to device file failed: %v", err)
-	}
-	return nil
+	return syncEvents(vRel.deviceFile)
 }
 
 // LeftRelease will simulate the release of the left mouse button.
@@ -142,11 +130,7 @@ func (vRel vMouse) LeftRelease() error {
 	if err != nil {
 		return fmt.Errorf("Failed to release the left mouse button: %v", err)
 	}
-	err = syncEvents(vRel.deviceFile)
-	if err != nil {
-		return fmt.Errorf("sync to device file failed: %v", err)
-	}
-	return nil
+	return syncEvents(vRel.deviceFile)
 }
 
 // RightPress will simulate the press of the right mouse button. Note that the button will not be released until
@@ -156,11 +140,7 @@ func (vRel vMouse) RightPress() error {
 	if err != nil {
 		return fmt.Errorf("Failed to press the right mouse button: %v", err)
 	}
-	err = syncEvents(vRel.deviceFile)
-	if err != nil {
-		return fmt.Errorf("sync to device file failed: %v", err)
-	}
-	return nil
+	return syncEvents(vRel.deviceFile)
 }
 
 // RightRelease will simulate the release of the right mouse button.
@@ -169,11 +149,7 @@ func (vRel vMouse) RightRelease() error {
 	if err != nil {
 		return fmt.Errorf("Failed to release the right mouse button: %v", err)
 	}
-	err = syncEvents(vRel.deviceFile)
-	if err != nil {
-		return fmt.Errorf("sync to device file failed: %v", err)
-	}
-	return nil
+	return syncEvents(vRel.deviceFile)
 }
 
 // Close closes the device and releases the device.
