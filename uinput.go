@@ -97,6 +97,9 @@ func validateDevicePath(path string) {
 }
 
 func validateUinputName(name []byte) {
+	if name == nil || len(name) == 0 {
+		panic(fmt.Sprintf("device name may not be empty"))
+	}
 	if len(name) > uinputMaxNameSize {
 		panic(fmt.Sprintf("device name %s is too long (maximum of %d characters allowed)", name, uinputMaxNameSize))
 	}

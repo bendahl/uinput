@@ -30,3 +30,17 @@ func TestValidateDevicePathInvalidPathPanics(t *testing.T) {
 	validateDevicePath(path)
 	t.Fatalf("Invalid path did not yield a panic")
 }
+
+func TestValidateUinputNameEmptyNamePanics(t *testing.T) {
+	expected := "device name may not be empty"
+	defer func() {
+		if r := recover(); r != nil {
+			actual := r.(string)
+			if actual != expected {
+				t.Fatalf("Expected: %s\nActual: %s", expected, actual)
+			}
+		}
+	}()
+	validateUinputName(nil)
+	t.Fatalf("expected panic due to validation error, but nothing happened...")
+}
