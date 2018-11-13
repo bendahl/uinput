@@ -157,6 +157,14 @@ License
 --------
 The package falls under the MIT license. Please see the "LICENSE" file for details.
 
+Design Decisions
+----------------
+After some consideration the validation logic of the uinput module was adapted. Instead of simply returning and error code
+it actually panics. The reasoning behind this is that invalid initialization parameters for the uinput device may be a clue
+for a programming error that should never pass silently. Also, faulty initialization values would simply cause the uinput
+device not to work. "Effective Go" also suggests to use panics in occasions where a library simply cannot set itself up due
+ to improper initialization (see: [Effective Go](https://golang.org/doc/effective_go.html#panic)).
+
 Current Status
 --------------
 2018-03-31: I am happy to announce that v1.0.0 is finally out! Go ahead and use this library in your own projects! Feedback is always welcome.
