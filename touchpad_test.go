@@ -66,7 +66,7 @@ func TestTouchPadCreationFailsOnEmptyPath(t *testing.T) {
 			}
 		}
 	}()
-	CreateTouchPad("", []byte("TouchDevice"), 0, 1024, 0, 768)
+	_, _ = CreateTouchPad("", []byte("TouchDevice"), 0, 1024, 0, 768)
 	t.Fatalf("Empty path did not yield a panic")
 }
 
@@ -81,7 +81,7 @@ func TestTouchPadCreationFailsOnNonExistentPathName(t *testing.T) {
 			}
 		}
 	}()
-	CreateTouchPad(path, []byte("TouchDevice"), 0, 1024, 0, 768)
+	_, _ = CreateTouchPad(path, []byte("TouchDevice"), 0, 1024, 0, 768)
 	t.Fatalf("Invalid path did not yield a panic")
 }
 
@@ -96,7 +96,7 @@ func TestTouchPadCreationFailsIfNameIsTooLong(t *testing.T) {
 			}
 		}
 	}()
-	CreateTouchPad("/dev/uinput", []byte(name), 0, 1024, 0, 768)
+	_, _ = CreateTouchPad("/dev/uinput", []byte(name), 0, 1024, 0, 768)
 	t.Fatalf("Invalid name did not yield a panic")
 }
 
@@ -105,7 +105,7 @@ func TestTouchPadMoveToFailsOnClosedDevice(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create the virtual touch pad. Last error was: %s\n", err)
 	}
-	absDev.Close()
+	_ = absDev.Close()
 	err = absDev.MoveTo(1, 1)
 	if err == nil {
 		t.Fatalf("Expected error due to closed device, but no error was returned.")
@@ -117,7 +117,7 @@ func TestTouchPadLeftClickFailsOnClosedDevice(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create the virtual touch pad. Last error was: %s\n", err)
 	}
-	absDev.Close()
+	_ = absDev.Close()
 	err = absDev.LeftClick()
 	if err == nil {
 		t.Fatalf("Expected error due to closed device, but no error was returned.")
@@ -129,7 +129,7 @@ func TestTouchPadLeftPressFailsOnClosedDevice(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create the virtual touch pad. Last error was: %s\n", err)
 	}
-	absDev.Close()
+	_ = absDev.Close()
 	err = absDev.LeftPress()
 	if err == nil {
 		t.Fatalf("Expected error due to closed device, but no error was returned.")
@@ -141,7 +141,7 @@ func TestTouchPadLeftReleaseFailsOnClosedDevice(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create the virtual touch pad. Last error was: %s\n", err)
 	}
-	absDev.Close()
+	_ = absDev.Close()
 	err = absDev.LeftRelease()
 	if err == nil {
 		t.Fatalf("Expected error due to closed device, but no error was returned.")
@@ -153,7 +153,7 @@ func TestTouchPadRightClickFailsOnClosedDevice(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create the virtual touch pad. Last error was: %s\n", err)
 	}
-	absDev.Close()
+	_ = absDev.Close()
 	err = absDev.RightClick()
 	if err == nil {
 		t.Fatalf("Expected error due to closed device, but no error was returned.")
@@ -165,7 +165,7 @@ func TestTouchPadRightPressFailsOnClosedDevice(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create the virtual touch pad. Last error was: %s\n", err)
 	}
-	absDev.Close()
+	_ = absDev.Close()
 	err = absDev.RightPress()
 	if err == nil {
 		t.Fatalf("Expected error due to closed device, but no error was returned.")
@@ -177,9 +177,32 @@ func TestTouchPadRightReleaseFailsOnClosedDevice(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create the virtual touch pad. Last error was: %s\n", err)
 	}
-	absDev.Close()
+	_ = absDev.Close()
 	err = absDev.RightRelease()
 	if err == nil {
 		t.Fatalf("Expected error due to closed device, but no error was returned.")
 	}
+}
+
+func TestMultipleTouchPadsWithDifferentSizes(t *testing.T) {
+	horizontal, err := CreateTouchPad("/dev/uinput", []byte("horizontal_pad"), 0, 200, 0, 100)
+	if err != nil {
+		t.Fatalf("Failed to create the virtual touch pad. Last error was: %s\n", err)
+	}
+	defer horizontal.Close()
+	vertical, err := CreateTouchPad("/dev/uinput", []byte("vertical_pad"), 0, 100, 0, 200)
+	if err != nil {
+		t.Fatalf("Failed to create the virtual touch pad. Last error was: %s\n", err)
+	}
+	defer vertical.Close()
+	err = horizontal.MoveTo(200, 100)
+	if err != nil {
+		t.Fatalf("Unable to move cursor on horizontal pad: %v", err)
+	}
+
+	err = vertical.MoveTo(100, 200)
+	if err != nil {
+		t.Fatalf("Unable to move cursor on horizontal pad: %v", err)
+	}
+
 }
