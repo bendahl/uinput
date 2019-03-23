@@ -184,7 +184,7 @@ func sendBtnEvent(deviceFile *os.File, key int, btnState int) (err error) {
 	if err != nil {
 		return fmt.Errorf("writing btnEvent structure to the device file failed: %v", err)
 	}
-	return err
+	return syncEvents(deviceFile)
 }
 
 func syncEvents(deviceFile *os.File) (err error) {

@@ -91,12 +91,7 @@ func (vRel vMouse) LeftClick() error {
 		return fmt.Errorf("Failed to issue the LeftClick event: %v", err)
 	}
 
-	err = sendBtnEvent(vRel.deviceFile, evBtnLeft, btnStateReleased)
-	if err != nil {
-		return fmt.Errorf("Failed to issue the KeyUp event: %v", err)
-	}
-
-	return syncEvents(vRel.deviceFile)
+	return sendBtnEvent(vRel.deviceFile, evBtnLeft, btnStateReleased)
 }
 
 // RightClick will issue a RightClick
@@ -106,50 +101,29 @@ func (vRel vMouse) RightClick() error {
 		return fmt.Errorf("Failed to issue the RightClick event: %v", err)
 	}
 
-	err = sendBtnEvent(vRel.deviceFile, evBtnRight, btnStateReleased)
-	if err != nil {
-		return fmt.Errorf("Failed to issue the KeyUp event: %v", err)
-	}
-
-	return syncEvents(vRel.deviceFile)
+	return sendBtnEvent(vRel.deviceFile, evBtnRight, btnStateReleased)
 }
 
 // LeftPress will simulate a press of the left mouse button. Note that the button will not be released until
 // LeftRelease is invoked.
 func (vRel vMouse) LeftPress() error {
-	err := sendBtnEvent(vRel.deviceFile, evBtnLeft, btnStatePressed)
-	if err != nil {
-		return fmt.Errorf("Failed press the left mouse button: %v", err)
-	}
-	return syncEvents(vRel.deviceFile)
+	return sendBtnEvent(vRel.deviceFile, evBtnLeft, btnStatePressed)
 }
 
 // LeftRelease will simulate the release of the left mouse button.
 func (vRel vMouse) LeftRelease() error {
-	err := sendBtnEvent(vRel.deviceFile, evBtnLeft, btnStateReleased)
-	if err != nil {
-		return fmt.Errorf("Failed to release the left mouse button: %v", err)
-	}
-	return syncEvents(vRel.deviceFile)
+	return sendBtnEvent(vRel.deviceFile, evBtnLeft, btnStateReleased)
 }
 
 // RightPress will simulate the press of the right mouse button. Note that the button will not be released until
 // RightRelease is invoked.
 func (vRel vMouse) RightPress() error {
-	err := sendBtnEvent(vRel.deviceFile, evBtnRight, btnStatePressed)
-	if err != nil {
-		return fmt.Errorf("Failed to press the right mouse button: %v", err)
-	}
-	return syncEvents(vRel.deviceFile)
+	return sendBtnEvent(vRel.deviceFile, evBtnRight, btnStatePressed)
 }
 
 // RightRelease will simulate the release of the right mouse button.
 func (vRel vMouse) RightRelease() error {
-	err := sendBtnEvent(vRel.deviceFile, evBtnRight, btnStateReleased)
-	if err != nil {
-		return fmt.Errorf("Failed to release the right mouse button: %v", err)
-	}
-	return syncEvents(vRel.deviceFile)
+	return sendBtnEvent(vRel.deviceFile, evBtnRight, btnStateReleased)
 }
 
 // Close closes the device and releases the device.
