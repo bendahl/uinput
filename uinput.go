@@ -201,7 +201,7 @@ func syncEvents(deviceFile *os.File) (err error) {
 }
 
 func inputEventToBuffer(iev inputEvent) (buffer []byte, err error) {
-	buf := new(bytes.Buffer)
+	buf := bytes.NewBuffer(make([]byte, 0, 24))
 	err = binary.Write(buf, binary.LittleEndian, iev)
 	if err != nil {
 		return nil, fmt.Errorf("failed to write input event to buffer: %v", err)
