@@ -206,3 +206,15 @@ func TestMultipleTouchPadsWithDifferentSizes(t *testing.T) {
 	}
 
 }
+
+func TestPositioningInUpperLeftCorner(t *testing.T) {
+	dev, err := CreateTouchPad("/dev/uinput", []byte("touchpad"), 0, 200, 0, 100)
+	if err != nil {
+		t.Fatalf("Failed to create the virtual touch pad. Last error was: %s\n", err)
+	}
+	defer dev.Close()
+	err = dev.MoveTo(0, 0)
+	if err != nil {
+		t.Fatalf("Failed to move cursor to upper left corner: %v", err)
+	}
+}

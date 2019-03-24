@@ -170,6 +170,14 @@ func sendAbsEvent(deviceFile *os.File, xPos int32, yPos int32) error {
 	ev[0].Code = absX
 	ev[0].Value = xPos
 
+	// Various tests (using evtest) have shown that positioning on x=0;y=0 doesn't trigger any event and will not move
+	// the cursor as expected. Setting at least one of the coordinates to -1 will however have the desired effect of
+	// moving the cursor to the upper left corner. Interestingly, the same is true for equivalent code in C, which rules
+	// out issues related to Go's data type representation or the like. This will need to be investigated further...
+	if xPos == 0 && yPos == 0 {
+		yPos -= 1
+	}
+
 	ev[1].Type = evAbs
 	ev[1].Code = absY
 	ev[1].Value = yPos
