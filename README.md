@@ -168,6 +168,7 @@ device not to work. "Effective Go" also suggests to use panics in occasions wher
 Current Status
 --------------
 2018-03-31: I am happy to announce that v1.0.0 is finally out! Go ahead and use this library in your own projects! Feedback is always welcome.
+
 2019-03-24: Release v1.0.1 fixes a positioning issue that affects the touchpad. See issue #11 for details (positioning works now, but a (possibly) better solution is under investigation).
 
 TODO
