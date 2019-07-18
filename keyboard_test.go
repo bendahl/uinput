@@ -2,6 +2,7 @@ package uinput
 
 import (
 	"fmt"
+	"os"
 	"testing"
 )
 
@@ -55,46 +56,27 @@ func TestKeysInValidRangeWork(t *testing.T) {
 
 func TestKeyboardCreationFailsOnEmptyPath(t *testing.T) {
 	expected := "device path must not be empty"
-	defer func() {
-		if r := recover(); r != nil {
-			actual := r.(string)
-			if actual != expected {
-				t.Fatalf("Expected: %s\nActual: %s", expected, actual)
-			}
-		}
-	}()
-	CreateKeyboard("", []byte("KeyboardDevice"))
-	t.Fatalf("Empty path did not yield a panic")
+	_, err := CreateKeyboard("", []byte("KeyboardDevice"))
+	if err.Error() != expected {
+		t.Fatalf("Expected: %s\nActual: %s", expected, err)
+	}
 }
 
 func TestKeyboardCreationFailsOnNonExistentPathName(t *testing.T) {
 	path := "/some/bogus/path"
-	expected := "device path '" + path + "' does not exist"
-	defer func() {
-		if r := recover(); r != nil {
-			actual := r.(string)
-			if actual != expected {
-				t.Fatalf("Expected: %s\nActual: %s", expected, actual)
-			}
-		}
-	}()
-	CreateKeyboard(path, []byte("KeyboardDevice"))
-	t.Fatalf("Invalid path did not yield a panic")
+	_, err := CreateKeyboard(path, []byte("KeyboardDevice"))
+	if !os.IsNotExist(err) {
+		t.Fatalf("Expected: os.IsNotExist error\nActual: %s", err)
+	}
 }
 
 func TestKeyboardCreationFailsIfNameIsTooLong(t *testing.T) {
 	name := "adsfdsferqewoirueworiuejdsfjdfa;ljoewrjeworiewuoruew;rj;kdlfjoeai;jfewoaifjef;das"
 	expected := fmt.Sprintf("device name %s is too long (maximum of %d characters allowed)", name, uinputMaxNameSize)
-	defer func() {
-		if r := recover(); r != nil {
-			actual := r.(string)
-			if actual != expected {
-				t.Fatalf("Expected: %s\nActual: %s", expected, actual)
-			}
-		}
-	}()
-	CreateKeyboard("/dev/uinput", []byte(name))
-	t.Fatalf("Invalid name did not yield a panic")
+	_, err := CreateKeyboard("/dev/uinput", []byte(name))
+	if err.Error() != expected {
+		t.Fatalf("Expected: %s\nActual: %s", expected, err)
+	}
 }
 
 func TestKeyOutsideOfRangeKeyPressFails(t *testing.T) {
