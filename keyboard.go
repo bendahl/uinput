@@ -32,8 +32,14 @@ type vKeyboard struct {
 // CreateKeyboard will create a new keyboard using the given uinput
 // device path of the uinput device.
 func CreateKeyboard(path string, name []byte) (Keyboard, error) {
-	validateDevicePath(path)
-	validateUinputName(name)
+	err := validateDevicePath(path)
+	if err != nil {
+		return nil, err
+	}
+	err = validateUinputName(name)
+	if err != nil {
+		return nil, err
+	}
 
 	fd, err := createVKeyboardDevice(path, name)
 	if err != nil {

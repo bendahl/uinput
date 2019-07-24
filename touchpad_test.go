@@ -2,6 +2,7 @@ package uinput
 
 import (
 	"fmt"
+	"os"
 	"testing"
 )
 
@@ -58,46 +59,27 @@ func TestBasicTouchPadMoves(t *testing.T) {
 
 func TestTouchPadCreationFailsOnEmptyPath(t *testing.T) {
 	expected := "device path must not be empty"
-	defer func() {
-		if r := recover(); r != nil {
-			actual := r.(string)
-			if actual != expected {
-				t.Fatalf("Expected: %s\nActual: %s", expected, actual)
-			}
-		}
-	}()
-	_, _ = CreateTouchPad("", []byte("TouchDevice"), 0, 1024, 0, 768)
-	t.Fatalf("Empty path did not yield a panic")
+	_, err := CreateTouchPad("", []byte("TouchDevice"), 0, 1024, 0, 768)
+	if err.Error() != expected {
+		t.Fatalf("Expected: %s\nActual: %s", expected, err)
+	}
 }
 
 func TestTouchPadCreationFailsOnNonExistentPathName(t *testing.T) {
 	path := "/some/bogus/path"
-	expected := "device path '" + path + "' does not exist"
-	defer func() {
-		if r := recover(); r != nil {
-			actual := r.(string)
-			if actual != expected {
-				t.Fatalf("Expected: %s\nActual: %s", expected, actual)
-			}
-		}
-	}()
-	_, _ = CreateTouchPad(path, []byte("TouchDevice"), 0, 1024, 0, 768)
-	t.Fatalf("Invalid path did not yield a panic")
+	_, err := CreateTouchPad(path, []byte("TouchDevice"), 0, 1024, 0, 768)
+	if !os.IsNotExist(err) {
+		t.Fatalf("Expected: os.IsNotExist error\nActual: %s", err)
+	}
 }
 
 func TestTouchPadCreationFailsIfNameIsTooLong(t *testing.T) {
 	name := "adsfdsferqewoirueworiuejdsfjdfa;ljoewrjeworiewuoruew;rj;kdlfjoeai;jfewoaifjef;das"
 	expected := fmt.Sprintf("device name %s is too long (maximum of %d characters allowed)", name, uinputMaxNameSize)
-	defer func() {
-		if r := recover(); r != nil {
-			actual := r.(string)
-			if actual != expected {
-				t.Fatalf("Expected: %s\nActual: %s", expected, actual)
-			}
-		}
-	}()
-	_, _ = CreateTouchPad("/dev/uinput", []byte(name), 0, 1024, 0, 768)
-	t.Fatalf("Invalid name did not yield a panic")
+	_, err := CreateTouchPad("/dev/uinput", []byte(name), 0, 1024, 0, 768)
+	if err.Error() != expected {
+		t.Fatalf("Expected: %s\nActual: %s", expected, err)
+	}
 }
 
 func TestTouchPadMoveToFailsOnClosedDevice(t *testing.T) {

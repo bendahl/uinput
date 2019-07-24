@@ -44,8 +44,14 @@ type vTouchPad struct {
 // CreateTouchPad will create a new touch pad device. note that you will need to define the x and y axis boundaries
 // (min and max) within which the cursor maybe moved around.
 func CreateTouchPad(path string, name []byte, minX int32, maxX int32, minY int32, maxY int32) (TouchPad, error) {
-	validateDevicePath(path)
-	validateUinputName(name)
+	err := validateDevicePath(path)
+	if err != nil {
+		return nil, err
+	}
+	err = validateUinputName(name)
+	if err != nil {
+		return nil, err
+	}
 
 	fd, err := createTouchPad(path, name, minX, maxX, minY, maxY)
 	if err != nil {

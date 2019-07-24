@@ -86,23 +86,22 @@ import (
 	"time"
 )
 
-func validateDevicePath(path string) {
+func validateDevicePath(path string) error {
 	if path == "" {
-		panic("device path must not be empty")
+		return errors.New("device path must not be empty")
 	}
 	_, err := os.Stat(path)
-	if os.IsNotExist(err) {
-		panic(fmt.Sprintf("device path '%s' does not exist", path))
-	}
+	return err
 }
 
-func validateUinputName(name []byte) {
-	if len(name) == 0 {
-		panic(fmt.Sprintf("device name may not be empty"))
+func validateUinputName(name []byte) error {
+	if name == nil || len(name) == 0 {
+		return errors.New("device name may not be empty")
 	}
 	if len(name) > uinputMaxNameSize {
-		panic(fmt.Sprintf("device name %s is too long (maximum of %d characters allowed)", name, uinputMaxNameSize))
+		return fmt.Errorf("device name %s is too long (maximum of %d characters allowed)", name, uinputMaxNameSize)
 	}
+	return nil
 }
 
 func toUinputName(name []byte) (uinputName [uinputMaxNameSize]byte) {

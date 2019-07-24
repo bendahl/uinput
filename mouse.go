@@ -53,8 +53,14 @@ type vMouse struct {
 // CreateMouse will create a new mouse input device. A mouse is a device that allows relative input.
 // Relative input means that all changes to the x and y coordinates of the mouse pointer will be
 func CreateMouse(path string, name []byte) (Mouse, error) {
-	validateDevicePath(path)
-	validateUinputName(name)
+	err := validateDevicePath(path)
+	if err != nil {
+		return nil, err
+	}
+	err = validateUinputName(name)
+	if err != nil {
+		return nil, err
+	}
 
 	fd, err := createMouse(path, name)
 	if err != nil {
