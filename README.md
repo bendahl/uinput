@@ -164,7 +164,7 @@ Current Status
 2019-03-24: Release v1.0.1 fixes a positioning issue that affects the touchpad. See issue #11 for details (positioning works now, but a (possibly) better solution is under investigation).
 
 2019-07-24: Don't panic! As of version v1.0.2 the uinput library will provide an error instead of raising a panic in case of a faulty initialization.
-See pull request #12 for details (many thanks to muesly for the contribution). 
+See pull request #12 for details (many thanks to muesli for the contribution).
 
 TODO
 ----
