@@ -200,3 +200,22 @@ func TestPositioningInUpperLeftCorner(t *testing.T) {
 		t.Fatalf("Failed to move cursor to upper left corner: %v", err)
 	}
 }
+
+func TestSingleTouchEvent(t *testing.T) {
+	dev, err := CreateTouchPad("/dev/uinput", []byte("touchpad"), 0, 200, 0, 100)
+	if err != nil {
+		t.Fatalf("Failed to create the virtual touch pad. Last error was: %s\n", err)
+	}
+	defer dev.Close()
+
+	err = dev.TouchDown()
+	if err != nil {
+		t.Fatalf("Failed to issue touch down event: %v", err)
+	}
+
+	err = dev.TouchUp()
+	if err != nil {
+		t.Fatalf("Failed to issue touch up event: %v", err)
+	}
+
+}

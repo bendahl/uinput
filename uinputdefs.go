@@ -16,17 +16,19 @@ const (
 
 // input event codes as specified in input-event-codes.h
 const (
-	evSyn      = 0x00
-	evKey      = 0x01
-	evRel      = 0x02
-	evAbs      = 0x03
-	relX       = 0x0
-	relY       = 0x1
-	absX       = 0x0
-	absY       = 0x1
-	synReport  = 0
-	evBtnLeft  = 0x110
-	evBtnRight = 0x111
+	evSyn           = 0x00
+	evKey           = 0x01
+	evRel           = 0x02
+	evAbs           = 0x03
+	relX            = 0x0
+	relY            = 0x1
+	absX            = 0x0
+	absY            = 0x1
+	synReport       = 0
+	evBtnLeft       = 0x110
+	evBtnRight      = 0x111
+	evBtnTouch      = 0x14a
+	evBtnToolFinger = 0x145
 )
 
 const (

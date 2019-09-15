@@ -54,12 +54,12 @@ func (vk vKeyboard) KeyPress(key int) error {
 	if !keyCodeInRange(key) {
 		return fmt.Errorf("failed to perform KeyPress. Code %d is not in range", key)
 	}
-	err := sendBtnEvent(vk.deviceFile, key, btnStatePressed)
+	err := sendBtnEvent(vk.deviceFile, []int{key}, btnStatePressed)
 	if err != nil {
 		return fmt.Errorf("failed to issue the KeyDown event: %v", err)
 	}
 
-	return sendBtnEvent(vk.deviceFile, key, btnStateReleased)
+	return sendBtnEvent(vk.deviceFile, []int{key}, btnStateReleased)
 }
 
 // KeyDown will send the key code passed (see keycodes.go for available keycodes). Note that unless a key release
@@ -69,7 +69,7 @@ func (vk vKeyboard) KeyDown(key int) error {
 	if !keyCodeInRange(key) {
 		return fmt.Errorf("failed to perform KeyDown. Code %d is not in range", key)
 	}
-	return sendBtnEvent(vk.deviceFile, key, btnStatePressed)
+	return sendBtnEvent(vk.deviceFile, []int{key}, btnStatePressed)
 }
 
 // KeyUp will release the given key passed as a parameter (see keycodes.go for available keycodes). In most
@@ -80,7 +80,7 @@ func (vk vKeyboard) KeyUp(key int) error {
 		return fmt.Errorf("failed to perform KeyUp. Code %d is not in range", key)
 	}
 
-	return sendBtnEvent(vk.deviceFile, key, btnStateReleased)
+	return sendBtnEvent(vk.deviceFile, []int{key}, btnStateReleased)
 }
 
 // Close will close the device and free resources.

@@ -150,6 +150,10 @@ func main() {
 	touch.MoveTo(400, 400)
 	// release the left mouse key
 	touch.LeftRelease()
+    // create a single tab using a finger and immediately release
+    touch.TouchDown()
+    touch.TouchUp()
+
 }
 ```
 

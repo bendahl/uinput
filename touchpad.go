@@ -33,6 +33,12 @@ type TouchPad interface {
 	// RightRelease will simulate the release of the right mouse button.
 	RightRelease() error
 
+	// TouchDown will simulate a single touch to a virtual touch device. Use TouchUp to end the touch gesture.
+	TouchDown() error
+
+	// TouchUp will end or ,more precisely, unset the touch event issued by TouchDown
+	TouchUp() error
+
 	io.Closer
 }
 
@@ -66,43 +72,51 @@ func (vTouch vTouchPad) MoveTo(x int32, y int32) error {
 }
 
 func (vTouch vTouchPad) LeftClick() error {
-	err := sendBtnEvent(vTouch.deviceFile, evBtnLeft, btnStatePressed)
+	err := sendBtnEvent(vTouch.deviceFile, []int{evBtnLeft}, btnStatePressed)
 	if err != nil {
 		return fmt.Errorf("Failed to issue the LeftClick event: %v", err)
 	}
 
-	return sendBtnEvent(vTouch.deviceFile, evBtnLeft, btnStateReleased)
+	return sendBtnEvent(vTouch.deviceFile, []int{evBtnLeft}, btnStateReleased)
 }
 
 func (vTouch vTouchPad) RightClick() error {
-	err := sendBtnEvent(vTouch.deviceFile, evBtnRight, btnStatePressed)
+	err := sendBtnEvent(vTouch.deviceFile, []int{evBtnRight}, btnStatePressed)
 	if err != nil {
 		return fmt.Errorf("Failed to issue the RightClick event: %v", err)
 	}
 
-	return sendBtnEvent(vTouch.deviceFile, evBtnRight, btnStateReleased)
+	return sendBtnEvent(vTouch.deviceFile, []int{evBtnRight}, btnStateReleased)
 }
 
 // LeftPress will simulate a press of the left mouse button. Note that the button will not be released until
 // LeftRelease is invoked.
 func (vTouch vTouchPad) LeftPress() error {
-	return sendBtnEvent(vTouch.deviceFile, evBtnLeft, btnStatePressed)
+	return sendBtnEvent(vTouch.deviceFile, []int{evBtnLeft}, btnStatePressed)
 }
 
 // LeftRelease will simulate the release of the left mouse button.
 func (vTouch vTouchPad) LeftRelease() error {
-	return sendBtnEvent(vTouch.deviceFile, evBtnLeft, btnStateReleased)
+	return sendBtnEvent(vTouch.deviceFile, []int{evBtnLeft}, btnStateReleased)
 }
 
 // RightPress will simulate the press of the right mouse button. Note that the button will not be released until
 // RightRelease is invoked.
 func (vTouch vTouchPad) RightPress() error {
-	return sendBtnEvent(vTouch.deviceFile, evBtnRight, btnStatePressed)
+	return sendBtnEvent(vTouch.deviceFile, []int{evBtnRight}, btnStatePressed)
 }
 
 // RightRelease will simulate the release of the right mouse button.
 func (vTouch vTouchPad) RightRelease() error {
-	return sendBtnEvent(vTouch.deviceFile, evBtnRight, btnStateReleased)
+	return sendBtnEvent(vTouch.deviceFile, []int{evBtnRight}, btnStateReleased)
+}
+
+func (vTouch vTouchPad) TouchDown() error {
+	return sendBtnEvent(vTouch.deviceFile, []int{evBtnTouch, evBtnToolFinger}, btnStatePressed)
+}
+
+func (vTouch vTouchPad) TouchUp() error {
+	return sendBtnEvent(vTouch.deviceFile, []int{evBtnTouch, evBtnToolFinger}, btnStateReleased)
 }
 
 func (vTouch vTouchPad) Close() error {
@@ -130,6 +144,18 @@ func createTouchPad(path string, name []byte, minX int32, maxX int32, minY int32
 	if err != nil {
 		deviceFile.Close()
 		return nil, fmt.Errorf("failed to register right click event: %v", err)
+	}
+
+	err = ioctl(deviceFile, uiSetKeyBit, uintptr(evBtnTouch))
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to register single touch event: %v", err)
+	}
+
+	err = ioctl(deviceFile, uiSetKeyBit, uintptr(evBtnToolFinger))
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to register touch tool finger: %v", err)
 	}
 
 	err = registerDevice(deviceFile, uintptr(evAbs))

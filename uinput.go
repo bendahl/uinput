@@ -170,18 +170,20 @@ func releaseDevice(deviceFile *os.File) (err error) {
 
 // Note that mice and touch pads do have buttons as well. Therefore, this function is used
 // by all currently available devices and resides in the main source file.
-func sendBtnEvent(deviceFile *os.File, key int, btnState int) (err error) {
-	buf, err := inputEventToBuffer(inputEvent{
-		Time:  syscall.Timeval{Sec: 0, Usec: 0},
-		Type:  evKey,
-		Code:  uint16(key),
-		Value: int32(btnState)})
-	if err != nil {
-		return fmt.Errorf("key event could not be set: %v", err)
-	}
-	_, err = deviceFile.Write(buf)
-	if err != nil {
-		return fmt.Errorf("writing btnEvent structure to the device file failed: %v", err)
+func sendBtnEvent(deviceFile *os.File, keys []int, btnState int) (err error) {
+	for _, key := range keys {
+		buf, err := inputEventToBuffer(inputEvent{
+			Time:  syscall.Timeval{Sec: 0, Usec: 0},
+			Type:  evKey,
+			Code:  uint16(key),
+			Value: int32(btnState)})
+		if err != nil {
+			return fmt.Errorf("key event could not be set: %v", err)
+		}
+		_, err = deviceFile.Write(buf)
+		if err != nil {
+			return fmt.Errorf("writing btnEvent structure to the device file failed: %v", err)
+		}
 	}
 	return syncEvents(deviceFile)
 }

@@ -92,44 +92,44 @@ func (vRel vMouse) MoveDown(pixel int32) error {
 
 // LeftClick will issue a LeftClick.
 func (vRel vMouse) LeftClick() error {
-	err := sendBtnEvent(vRel.deviceFile, evBtnLeft, btnStatePressed)
+	err := sendBtnEvent(vRel.deviceFile, []int{evBtnLeft}, btnStatePressed)
 	if err != nil {
 		return fmt.Errorf("Failed to issue the LeftClick event: %v", err)
 	}
 
-	return sendBtnEvent(vRel.deviceFile, evBtnLeft, btnStateReleased)
+	return sendBtnEvent(vRel.deviceFile, []int{evBtnLeft}, btnStateReleased)
 }
 
 // RightClick will issue a RightClick
 func (vRel vMouse) RightClick() error {
-	err := sendBtnEvent(vRel.deviceFile, evBtnRight, btnStatePressed)
+	err := sendBtnEvent(vRel.deviceFile, []int{evBtnRight}, btnStatePressed)
 	if err != nil {
 		return fmt.Errorf("Failed to issue the RightClick event: %v", err)
 	}
 
-	return sendBtnEvent(vRel.deviceFile, evBtnRight, btnStateReleased)
+	return sendBtnEvent(vRel.deviceFile, []int{evBtnRight}, btnStateReleased)
 }
 
 // LeftPress will simulate a press of the left mouse button. Note that the button will not be released until
 // LeftRelease is invoked.
 func (vRel vMouse) LeftPress() error {
-	return sendBtnEvent(vRel.deviceFile, evBtnLeft, btnStatePressed)
+	return sendBtnEvent(vRel.deviceFile, []int{evBtnLeft}, btnStatePressed)
 }
 
 // LeftRelease will simulate the release of the left mouse button.
 func (vRel vMouse) LeftRelease() error {
-	return sendBtnEvent(vRel.deviceFile, evBtnLeft, btnStateReleased)
+	return sendBtnEvent(vRel.deviceFile, []int{evBtnLeft}, btnStateReleased)
 }
 
 // RightPress will simulate the press of the right mouse button. Note that the button will not be released until
 // RightRelease is invoked.
 func (vRel vMouse) RightPress() error {
-	return sendBtnEvent(vRel.deviceFile, evBtnRight, btnStatePressed)
+	return sendBtnEvent(vRel.deviceFile, []int{evBtnRight}, btnStatePressed)
 }
 
 // RightRelease will simulate the release of the right mouse button.
 func (vRel vMouse) RightRelease() error {
-	return sendBtnEvent(vRel.deviceFile, evBtnRight, btnStateReleased)
+	return sendBtnEvent(vRel.deviceFile, []int{evBtnRight}, btnStateReleased)
 }
 
 // Close closes the device and releases the device.
