@@ -207,7 +207,7 @@ func sendAbsEvent(deviceFile *os.File, xPos int32, yPos int32) error {
 	// moving the cursor to the upper left corner. Interestingly, the same is true for equivalent code in C, which rules
 	// out issues related to Go's data type representation or the like. This will need to be investigated further...
 	if xPos == 0 && yPos == 0 {
-		yPos -= 1
+		yPos--
 	}
 
 	ev[1].Type = evAbs
