@@ -5,7 +5,7 @@ go:
   - "1.12"
   - "1.13"
 
-dist: xenial
+dist: bionic 
 sudo: required
 
 before_install:
