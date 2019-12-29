@@ -22,6 +22,8 @@ const (
 	evAbs           = 0x03
 	relX            = 0x0
 	relY            = 0x1
+	relHWheel       = 0x6
+	relWheel        = 0x8
 	absX            = 0x0
 	absY            = 0x1
 	synReport       = 0

@@ -63,6 +63,16 @@ func TestBasicMouseMoves(t *testing.T) {
 		t.Fatalf("Failed to perform right key release. Last error was: %s\n", err)
 	}
 
+	err = relDev.Wheel(false, 1)
+	if err != nil {
+		t.Fatalf("Failed to perform wheel movement. Last error was: %s\n", err)
+	}
+
+	err = relDev.Wheel(true, 1)
+	if err != nil {
+		t.Fatalf("Failed to perform horizontal wheel movement. Last error was: %s\n", err)
+	}
+
 	err = relDev.Close()
 	if err != nil {
 		t.Fatalf("Failed to close device. Last error was: %s\n", err)
@@ -219,6 +229,19 @@ func TestMouseMoveRightFailsIfDeviceIsClosed(t *testing.T) {
 	relDev.Close()
 
 	err = relDev.MoveRight(1)
+	if err == nil {
+		t.Fatalf("Expected error due to closed device, but no error was returned.")
+	}
+}
+
+func TestMouseWheelFailsIfDeviceIsClosed(t *testing.T) {
+	relDev, err := CreateMouse("/dev/uinput", []byte("Test Basic Mouse"))
+	if err != nil {
+		t.Fatalf("Failed to create the virtual mouse. Last error was: %s\n", err)
+	}
+	relDev.Close()
+
+	err = relDev.Wheel(false, 1)
 	if err == nil {
 		t.Fatalf("Expected error due to closed device, but no error was returned.")
 	}
