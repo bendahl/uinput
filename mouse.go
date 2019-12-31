@@ -42,6 +42,9 @@ type Mouse interface {
 	// RightRelease will simulate the release of the right mouse button.
 	RightRelease() error
 
+	// Wheel will simulate a wheel movement.
+	Wheel(horizontal bool, delta int32) error
+
 	io.Closer
 }
 
@@ -132,6 +135,15 @@ func (vRel vMouse) RightRelease() error {
 	return sendBtnEvent(vRel.deviceFile, []int{evBtnRight}, btnStateReleased)
 }
 
+// Wheel will simulate a wheel movement.
+func (vRel vMouse) Wheel(horizontal bool, delta int32) error {
+	w := relWheel
+	if horizontal {
+		w = relHWheel
+	}
+	return sendRelEvent(vRel.deviceFile, uint16(w), delta)
+}
+
 // Close closes the device and releases the device.
 func (vRel vMouse) Close() error {
 	return closeDevice(vRel.deviceFile)
@@ -176,6 +188,18 @@ func createMouse(path string, name []byte) (fd *os.File, err error) {
 	if err != nil {
 		deviceFile.Close()
 		return nil, fmt.Errorf("failed to register relative y axis events: %v", err)
+	}
+
+	// register wheel events
+	err = ioctl(deviceFile, uiSetRelBit, uintptr(relWheel))
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to register wheel events: %v", err)
+	}
+	err = ioctl(deviceFile, uiSetRelBit, uintptr(relHWheel))
+	if err != nil {
+		deviceFile.Close()
+		return nil, fmt.Errorf("failed to register horizontal wheel events: %v", err)
 	}
 
 	return createUsbDevice(deviceFile,
