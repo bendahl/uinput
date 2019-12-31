@@ -244,7 +244,7 @@ const (
 	KeyBrightnessZero   = 244 /*BrightnessOff,UseAmbient*/
 	KeyDisplayOff       = 245 /*DisplayDeviceToOffState*/
 	KeyWimax            = 246
-	KeyRfkill           = 247 /*KeyThatControlsAllRadios*/
-	KeyMicmute          = 248 /*Mute/UnmuteTheMicrophone*/
-	keyMax              = 248 // highest key currently defined
+	KeyRfkill           = 247   /*KeyThatControlsAllRadios*/
+	KeyMicmute          = 248   /*Mute/UnmuteTheMicrophone*/
+	keyMax              = 0x2ff // highest key currently defined
 )
