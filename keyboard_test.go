@@ -86,7 +86,7 @@ func TestKeyOutsideOfRangeKeyPressFails(t *testing.T) {
 	}
 	defer vk.Close()
 
-	err = vk.KeyPress(249)
+	err = vk.KeyPress(keyMax + 1)
 	if err == nil {
 		t.Fatalf("Expected key press to fail due to invalid key code, but got no error.")
 	}
@@ -104,7 +104,7 @@ func TestKeyOutsideOfRangeKeyUpFails(t *testing.T) {
 	}
 	defer vk.Close()
 
-	err = vk.KeyUp(249)
+	err = vk.KeyUp(keyMax + 1)
 	if err == nil {
 		t.Fatalf("Expected key press to fail due to invalid key code, but got no error.")
 	}
@@ -123,7 +123,7 @@ func TestKeyOutsideOfRangeKeyDownFails(t *testing.T) {
 	}
 	defer vk.Close()
 
-	err = vk.KeyDown(249)
+	err = vk.KeyDown(keyMax + 1)
 	if err == nil {
 		t.Fatalf("Expected key press to fail due to invalid key code, but got no error.")
 	}
