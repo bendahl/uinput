@@ -170,7 +170,9 @@ Current Status
 2019-07-24: Don't panic! As of version v1.0.2 the uinput library will provide an error instead of raising a panic in case of a faulty initialization.
 See pull request #12 for details (many thanks to muesli for the contribution).
 
-2019-09-15: Add single touch event (resistive).
+2019-09-15: Add single touch event (resistive)
+
+2019-12-31: Release v1.1.0 introduces yet another cool feature: Mouse wheel support. Thanks to muesli for this contribution!
 
 TODO
 ----
