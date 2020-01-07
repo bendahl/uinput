@@ -210,6 +210,8 @@ See pull request #12 for details (many thanks to muesli for the contribution).
 
 2019-12-31: Release v1.1.0 introduces yet another cool feature: Mouse wheel support. Thanks to muesli for this contribution!
 
+2020-01-07: Release v1.2.0 introduces dial device support. Thanks again to muesli!
+
 TODO
 ----
 The current API can be considered stable and the overall functionality (as originally envisioned) is complete.
