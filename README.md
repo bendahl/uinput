@@ -120,6 +120,15 @@ func main() {
 	mouse.MoveDown(100)
 	// release the left mouse button
 	mouse.LeftRelease()
+
+	// wheel up
+	mouse.Wheel(false, 1)
+	// wheel down
+	mouse.Wheel(false, -1)
+	// horizontal wheel left
+	mouse.Wheel(true, 1)
+	// horizontal wheel right
+	mouse.Wheel(true, -1)
 }
 ```
 
