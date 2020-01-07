@@ -24,6 +24,7 @@ const (
 	relY            = 0x1
 	relHWheel       = 0x6
 	relWheel        = 0x8
+	relDial         = 0x7
 	absX            = 0x0
 	absY            = 0x1
 	synReport       = 0
