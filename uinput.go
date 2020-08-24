@@ -192,8 +192,8 @@ func syncEvents(deviceFile *os.File) (err error) {
 	buf, err := inputEventToBuffer(inputEvent{
 		Time:  syscall.Timeval{Sec: 0, Usec: 0},
 		Type:  evSyn,
-		Code:  0,
-		Value: int32(synReport)})
+		Code:  uint16(synReport),
+		Value: 0})
 	if err != nil {
 		return fmt.Errorf("writing sync event failed: %v", err)
 	}
