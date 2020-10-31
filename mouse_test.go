@@ -234,6 +234,63 @@ func TestMouseMoveRightFailsIfDeviceIsClosed(t *testing.T) {
 	}
 }
 
+func TestMouseMoveFailsIfNegativeValueIsPassed(t *testing.T) {
+	relDev, err := CreateMouse("/dev/uinput", []byte("Test Basic Mouse"))
+	if err != nil {
+		t.Fatalf("Failed to create the virtual mouse. Last error was: %s\n", err)
+	}
+
+	if err = relDev.MoveUp(-1); err == nil {
+		t.Fatalf("Expected an error due to negative imput value, but error silently passed.")
+	}
+
+	if err = relDev.MoveDown(-1); err == nil {
+		t.Fatalf("Expected an error due to negative imput value, but error silently passed.")
+	}
+
+	if err = relDev.MoveLeft(-1); err == nil {
+		t.Fatalf("Expected an error due to negative imput value, but error silently passed.")
+	}
+
+	if err = relDev.MoveRight(-1); err == nil {
+		t.Fatalf("Expected an error due to negative imput value, but error silently passed.")
+	}
+
+	if err = relDev.Close(); err != nil {
+		t.Fatalf("Failed to close device. Last error was: %v", err)
+	}
+
+}
+
+// it doesn't make much sense to pass zero as a value, but is technically ok and should therefore work
+func TestMouseMoveByZeroDoesNotErrorOut(t *testing.T) {
+	relDev, err := CreateMouse("/dev/uinput", []byte("Test Basic Mouse"))
+	if err != nil {
+		t.Fatalf("Failed to create the virtual mouse. Last error was: %s\n", err)
+	}
+
+	if err = relDev.MoveUp(0); err != nil {
+		t.Fatalf("Expected an error due to zero imput value, but error silently passed.")
+	}
+
+	if err = relDev.MoveDown(0); err != nil {
+		t.Fatalf("Expected an error due to zero imput value, but error silently passed.")
+	}
+
+	if err = relDev.MoveLeft(0); err != nil {
+		t.Fatalf("Expected an error due to zero imput value, but error silently passed.")
+	}
+
+	if err = relDev.MoveRight(0); err != nil {
+		t.Fatalf("Expected an error due to zero imput value, but error silently passed.")
+	}
+
+	if err = relDev.Close(); err != nil {
+		t.Fatalf("Failed to close device. Last error was: %v", err)
+	}
+
+}
+
 func TestMouseWheelFailsIfDeviceIsClosed(t *testing.T) {
 	relDev, err := CreateMouse("/dev/uinput", []byte("Test Basic Mouse"))
 	if err != nil {

@@ -75,21 +75,33 @@ func CreateMouse(path string, name []byte) (Mouse, error) {
 
 // MoveLeft will move the cursor left by the number of pixel specified.
 func (vRel vMouse) MoveLeft(pixel int32) error {
+	if err := assertNotNegative(pixel); err != nil {
+		return err
+	}
 	return sendRelEvent(vRel.deviceFile, relX, -pixel)
 }
 
 // MoveRight will move the cursor right by the number of pixel specified.
 func (vRel vMouse) MoveRight(pixel int32) error {
+	if err := assertNotNegative(pixel); err != nil {
+		return err
+	}
 	return sendRelEvent(vRel.deviceFile, relX, pixel)
 }
 
 // MoveUp will move the cursor up by the number of pixel specified.
 func (vRel vMouse) MoveUp(pixel int32) error {
+	if err := assertNotNegative(pixel); err != nil {
+		return err
+	}
 	return sendRelEvent(vRel.deviceFile, relY, -pixel)
 }
 
 // MoveDown will move the cursor down by the number of pixel specified.
 func (vRel vMouse) MoveDown(pixel int32) error {
+	if err := assertNotNegative(pixel); err != nil {
+		return err
+	}
 	return sendRelEvent(vRel.deviceFile, relY, pixel)
 }
 
@@ -230,4 +242,11 @@ func sendRelEvent(deviceFile *os.File, eventCode uint16, pixel int32) error {
 	}
 
 	return syncEvents(deviceFile)
+}
+
+func assertNotNegative(val int32) error {
+	if val < 0 {
+		return fmt.Errorf("%v is out of range. Expected a positive or zero value", val)
+	}
+	return nil
 }
