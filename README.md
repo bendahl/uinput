@@ -110,6 +110,8 @@ func main() {
 	mouse.MoveDown(10)
 	// mouse pointer will be moved to the left by 10 pixels (we're back to where we started)
 	mouse.MoveLeft(10)
+    // move the mouse pointer by 100 pixels on the x and y axes (right and down in this case)
+    mouse.Move(100, 100)
 
 	// click left
 	mouse.LeftClick()
