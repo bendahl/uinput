@@ -1,4 +1,4 @@
-Uinput [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Build Status](https://travis-ci.org/bendahl/uinput.svg?branch=master)](https://travis-ci.org/bendahl/uinput) [![PkgGoDev](https://pkg.go.dev/badge/https://pkg.go.dev/github.com/bendahl/uinput)](https://pkg.go.dev/https://pkg.go.dev/github.com/bendahl/uinput) [![Go Report Card](https://goreportcard.com/badge/github.com/bendahl/uinput)](https://goreportcard.com/report/github.com/bendahl/uinput)
+Uinput [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Build Status](https://travis-ci.org/bendahl/uinput.svg?branch=master)](https://travis-ci.org/bendahl/uinput) [![PkgGoDev](https://pkg.go.dev/badge/github.com/bendahl/uinput)](https://pkg.go.dev/github.com/bendahl/uinput) [![Go Report Card](https://goreportcard.com/badge/github.com/bendahl/uinput)](https://goreportcard.com/report/github.com/bendahl/uinput)
 ====
 
 This package provides pure go wrapper functions for the LINUX uinput device, which allows to create virtual input devices
