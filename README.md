@@ -110,8 +110,8 @@ func main() {
 	mouse.MoveDown(10)
 	// mouse pointer will be moved to the left by 10 pixels (we're back to where we started)
 	mouse.MoveLeft(10)
-    // move the mouse pointer by 100 pixels on the x and y axes (right and down in this case)
-    mouse.Move(100, 100)
+        // move the mouse pointer by 100 pixels on the x and y axes (right and down in this case) 
+        mouse.Move(100, 100)
 
 	// click left
 	mouse.LeftClick()
@@ -213,6 +213,9 @@ See pull request #12 for details (many thanks to muesli for the contribution).
 2019-12-31: Release v1.1.0 introduces yet another cool feature: Mouse wheel support. Thanks to muesli for this contribution!
 
 2020-01-07: Release v1.2.0 introduces dial device support. Thanks again to muesli!
+
+2020-11-15: Release v1.4.0 introduces a new Move(x, y) function to the mouse device along with a little cleanup and additional tests.
+Thanks robpre and MetalBlueberry for your valuable input! 
 
 TODO
 ----
