@@ -22,6 +22,11 @@ type Mouse interface {
 	// MoveDown will move the mouse cursor down by the given number of pixel.
 	MoveDown(pixel int32) error
 
+	// Move will perform a move of the mouse pointer along the x and y axes relative to the current position as requested.
+	// Note that the upper left corner is (0, 0), so positive x and y means moving right (x) and down (y), whereas negative
+	// values will cause a move towards the upper left corner.
+	Move(x, y int32) error
+
 	// LeftClick will issue a single left click.
 	LeftClick() error
 
@@ -103,6 +108,19 @@ func (vRel vMouse) MoveDown(pixel int32) error {
 		return err
 	}
 	return sendRelEvent(vRel.deviceFile, relY, pixel)
+}
+
+// Move will perform a move of the mouse pointer along the x and y axes relative to the current position as requested.
+// Note that the upper left corner is (0, 0), so positive x and y means moving right (x) and down (y), whereas negative
+// values will cause a move towards the upper left corner.
+func (vRel vMouse) Move(x, y int32) error {
+	if err := sendRelEvent(vRel.deviceFile, relX, x); err != nil {
+		return fmt.Errorf("Failed to move pointer along x axis: %v", err)
+	}
+	if err := sendRelEvent(vRel.deviceFile, relY, y); err != nil {
+		return fmt.Errorf("Failed to move pointer along y axis: %v", err)
+	}
+	return nil
 }
 
 // LeftClick will issue a LeftClick.

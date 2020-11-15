@@ -33,6 +33,16 @@ func TestBasicMouseMoves(t *testing.T) {
 		t.Fatalf("Failed to move mouse down. Last error was: %s\n", err)
 	}
 
+	err = relDev.Move(100, 100)
+	if err != nil {
+		t.Fatalf("Failed to perform mouse move using positive coordinates. Last error was: %s\n", err)
+	}
+
+	err = relDev.Move(-100, -100)
+	if err != nil {
+		t.Fatalf("Failed to perform mouse move using negative coordinates. Last error was: %s\n", err)
+	}
+
 	err = relDev.RightClick()
 	if err != nil {
 		t.Fatalf("Failed to perform right click. Last error was: %s\n", err)
