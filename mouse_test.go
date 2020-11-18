@@ -2,6 +2,7 @@ package uinput
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"testing"
 )
@@ -102,6 +103,20 @@ func TestMouseCreationFailsOnNonExistentPathName(t *testing.T) {
 	_, err := CreateMouse(path, []byte("MouseDevice"))
 	if !os.IsNotExist(err) {
 		t.Fatalf("Expected: os.IsNotExist error\nActual: %s", err)
+	}
+}
+
+func TestMouseCreationFailsOnWrongPathName(t *testing.T) {
+	file, err := ioutil.TempFile(os.TempDir(), "uinput-mouse-test-")
+	if err != nil {
+		t.Fatalf("Failed to setup test. Unable to create tempfile: %v", err)
+	}
+	defer file.Close()
+
+	expected := "failed to register key device: failed to close device: inappropriate ioctl for device"
+	_, err = CreateMouse(file.Name(), []byte("DialDevice"))
+	if err == nil || !(expected == err.Error()) {
+		t.Fatalf("Expected: %s\nActual: %s", expected, err)
 	}
 }
 

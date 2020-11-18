@@ -2,6 +2,7 @@ package uinput
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"testing"
 )
@@ -67,6 +68,20 @@ func TestKeyboardCreationFailsOnNonExistentPathName(t *testing.T) {
 	_, err := CreateKeyboard(path, []byte("KeyboardDevice"))
 	if !os.IsNotExist(err) {
 		t.Fatalf("Expected: os.IsNotExist error\nActual: %s", err)
+	}
+}
+
+func TestKeyboardCreationFailsOnWrongPathName(t *testing.T) {
+	file, err := ioutil.TempFile(os.TempDir(), "uinput-keyboard-test-")
+	if err != nil {
+		t.Fatalf("Failed to setup test. Unable to create tempfile: %v", err)
+	}
+	defer file.Close()
+
+	expected := "failed to register virtual keyboard device: failed to close device: inappropriate ioctl for device"
+	_, err = CreateKeyboard(file.Name(), []byte("DialDevice"))
+	if err == nil || !(expected == err.Error()) {
+		t.Fatalf("Expected: %s\nActual: %s", expected, err)
 	}
 }
 

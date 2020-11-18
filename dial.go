@@ -59,7 +59,7 @@ func createDial(path string, name []byte) (fd *os.File, err error) {
 	err = registerDevice(deviceFile, uintptr(evRel))
 	if err != nil {
 		deviceFile.Close()
-		return nil, fmt.Errorf("failed to register relative axis input device: %v", err)
+		return nil, fmt.Errorf("failed to register dial input device: %v", err)
 	}
 
 	// register dial events

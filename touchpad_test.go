@@ -2,6 +2,7 @@ package uinput
 
 import (
 	"fmt"
+	"io/ioutil"
 	"os"
 	"testing"
 )
@@ -70,6 +71,20 @@ func TestTouchPadCreationFailsOnNonExistentPathName(t *testing.T) {
 	_, err := CreateTouchPad(path, []byte("TouchDevice"), 0, 1024, 0, 768)
 	if !os.IsNotExist(err) {
 		t.Fatalf("Expected: os.IsNotExist error\nActual: %s", err)
+	}
+}
+
+func TestTouchPadCreationFailsOnWrongPathName(t *testing.T) {
+	file, err := ioutil.TempFile(os.TempDir(), "uinput-touchpad-test-")
+	if err != nil {
+		t.Fatalf("Failed to setup test. Unable to create tempfile: %v", err)
+	}
+	defer file.Close()
+
+	expected := "failed to register key device: failed to close device: inappropriate ioctl for device"
+	_, err = CreateTouchPad(file.Name(), []byte("TouchDevice"), 0, 1024, 0, 768)
+	if err == nil || !(expected == err.Error()) {
+		t.Fatalf("Expected: %s\nActual: %s", expected, err)
 	}
 }
 
