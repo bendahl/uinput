@@ -190,16 +190,14 @@ func createMouse(path string, name []byte) (fd *os.File, err error) {
 		deviceFile.Close()
 		return nil, fmt.Errorf("failed to register key device: %v", err)
 	}
+
 	// register button events (in order to enable left and right click)
-	err = ioctl(deviceFile, uiSetKeyBit, uintptr(evBtnLeft))
-	if err != nil {
-		deviceFile.Close()
-		return nil, fmt.Errorf("failed to register left click event: %v", err)
-	}
-	err = ioctl(deviceFile, uiSetKeyBit, uintptr(evBtnRight))
-	if err != nil {
-		deviceFile.Close()
-		return nil, fmt.Errorf("failed to register right click event: %v", err)
+	for _, event := range []int{evBtnLeft, evBtnRight} {
+		err = ioctl(deviceFile, uiSetKeyBit, uintptr(event))
+		if err != nil {
+			deviceFile.Close()
+			return nil, fmt.Errorf("failed to register click event %v: %v", event, err)
+		}
 	}
 
 	err = registerDevice(deviceFile, uintptr(evRel))
@@ -208,28 +206,13 @@ func createMouse(path string, name []byte) (fd *os.File, err error) {
 		return nil, fmt.Errorf("failed to register relative axis input device: %v", err)
 	}
 
-	// register x and y axis events
-	err = ioctl(deviceFile, uiSetRelBit, uintptr(relX))
-	if err != nil {
-		deviceFile.Close()
-		return nil, fmt.Errorf("failed to register relative x axis events: %v", err)
-	}
-	err = ioctl(deviceFile, uiSetRelBit, uintptr(relY))
-	if err != nil {
-		deviceFile.Close()
-		return nil, fmt.Errorf("failed to register relative y axis events: %v", err)
-	}
-
-	// register wheel events
-	err = ioctl(deviceFile, uiSetRelBit, uintptr(relWheel))
-	if err != nil {
-		deviceFile.Close()
-		return nil, fmt.Errorf("failed to register wheel events: %v", err)
-	}
-	err = ioctl(deviceFile, uiSetRelBit, uintptr(relHWheel))
-	if err != nil {
-		deviceFile.Close()
-		return nil, fmt.Errorf("failed to register horizontal wheel events: %v", err)
+	// register relative events
+	for _, event := range []int{relX, relY, relWheel, relHWheel} {
+		err = ioctl(deviceFile, uiSetRelBit, uintptr(event))
+		if err != nil {
+			deviceFile.Close()
+			return nil, fmt.Errorf("failed to register relative event %v: %v", event, err)
+		}
 	}
 
 	return createUsbDevice(deviceFile,

@@ -135,27 +135,12 @@ func createTouchPad(path string, name []byte, minX int32, maxX int32, minY int32
 		return nil, fmt.Errorf("failed to register key device: %v", err)
 	}
 	// register button events (in order to enable left and right click)
-	err = ioctl(deviceFile, uiSetKeyBit, uintptr(evBtnLeft))
-	if err != nil {
-		deviceFile.Close()
-		return nil, fmt.Errorf("failed to register left click event: %v", err)
-	}
-	err = ioctl(deviceFile, uiSetKeyBit, uintptr(evBtnRight))
-	if err != nil {
-		deviceFile.Close()
-		return nil, fmt.Errorf("failed to register right click event: %v", err)
-	}
-
-	err = ioctl(deviceFile, uiSetKeyBit, uintptr(evBtnTouch))
-	if err != nil {
-		deviceFile.Close()
-		return nil, fmt.Errorf("failed to register single touch event: %v", err)
-	}
-
-	err = ioctl(deviceFile, uiSetKeyBit, uintptr(evBtnToolFinger))
-	if err != nil {
-		deviceFile.Close()
-		return nil, fmt.Errorf("failed to register touch tool finger: %v", err)
+	for _, event := range []int{evBtnLeft, evBtnRight, evBtnTouch, evBtnToolFinger} {
+		err = ioctl(deviceFile, uiSetKeyBit, uintptr(event))
+		if err != nil {
+			deviceFile.Close()
+			return nil, fmt.Errorf("failed to register button event %v: %v", event, err)
+		}
 	}
 
 	err = registerDevice(deviceFile, uintptr(evAbs))
@@ -165,15 +150,12 @@ func createTouchPad(path string, name []byte, minX int32, maxX int32, minY int32
 	}
 
 	// register x and y axis events
-	err = ioctl(deviceFile, uiSetAbsBit, uintptr(absX))
-	if err != nil {
-		deviceFile.Close()
-		return nil, fmt.Errorf("failed to register absolute x axis events: %v", err)
-	}
-	err = ioctl(deviceFile, uiSetAbsBit, uintptr(absY))
-	if err != nil {
-		deviceFile.Close()
-		return nil, fmt.Errorf("failed to register absolute y axis events: %v", err)
+	for _, event := range []int{absX, absY} {
+		err = ioctl(deviceFile, uiSetAbsBit, uintptr(event))
+		if err != nil {
+			deviceFile.Close()
+			return nil, fmt.Errorf("failed to register absolute axis event %v: %v", event, err)
+		}
 	}
 
 	var absMin [absSize]int32
