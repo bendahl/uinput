@@ -5,6 +5,10 @@ go:
   - "1.14"
   - "1.15"
 
+arch:
+  - amd64
+  - arm64
+
 dist: bionic 
 sudo: required
 
