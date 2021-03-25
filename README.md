@@ -217,6 +217,8 @@ See pull request #12 for details (many thanks to muesli for the contribution).
 2020-11-15: Release v1.4.0 introduces a new Move(x, y) function to the mouse device along with a little cleanup and additional tests.
 Thanks robpre and MetalBlueberry for your valuable input! 
 
+2021-03-25: Release v1.4.1 fixes a keyboard issue that may affect android systems. See issue #24 for details.
+
 TODO
 ----
 The current API can be considered stable and the overall functionality (as originally envisioned) is complete.
