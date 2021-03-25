@@ -102,7 +102,7 @@ func createVKeyboardDevice(path string, name []byte) (fd *os.File, err error) {
 	}
 
 	// register key events
-	for i := 0; i < keyMax; i++ {
+	for i := 0; i <= keyMax; i++ {
 		err = ioctl(deviceFile, uiSetKeyBit, uintptr(i))
 		if err != nil {
 			deviceFile.Close()
