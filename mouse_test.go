@@ -1,4 +1,4 @@
-package uinput
+package main
 
 import (
 	"fmt"
@@ -54,9 +54,14 @@ func TestBasicMouseMoves(t *testing.T) {
 		t.Fatalf("Failed to perform right click. Last error was: %s\n", err)
 	}
 
+	err = relDev.MiddleClick()
+	if err != nil {
+		t.Fatalf("Failed to perform middle click. Last error was: %s\n", err)
+	}
+
 	err = relDev.LeftPress()
 	if err != nil {
-		t.Fatalf("Failed to perform left key press. Last error was: %s\n", err)
+		t.Fatalf("Failed to perform left key isPress. Last error was: %s\n", err)
 	}
 
 	err = relDev.LeftRelease()
@@ -66,12 +71,22 @@ func TestBasicMouseMoves(t *testing.T) {
 
 	err = relDev.RightPress()
 	if err != nil {
-		t.Fatalf("Failed to perform right key press. Last error was: %s\n", err)
+		t.Fatalf("Failed to perform right key isPress. Last error was: %s\n", err)
 	}
 
 	err = relDev.RightRelease()
 	if err != nil {
 		t.Fatalf("Failed to perform right key release. Last error was: %s\n", err)
+	}
+
+	err = relDev.MiddlePress()
+	if err != nil {
+		t.Fatalf("Failed to perform middle key isPress. Last error was: %s\n", err)
+	}
+
+	err = relDev.MiddleRelease()
+	if err != nil {
+		t.Fatalf("Failed to perform middle key release. Last error was: %s\n", err)
 	}
 
 	err = relDev.Wheel(false, 1)
@@ -202,6 +217,45 @@ func TestVMouse_RightReleaseFailsIfDeviceIsClosed(t *testing.T) {
 	relDev.Close()
 
 	err = relDev.RightRelease()
+	if err == nil {
+		t.Fatalf("Expected error due to closed device, but no error was returned.")
+	}
+}
+
+func TestMouseMiddleClickFailsIfDeviceIsClosed(t *testing.T) {
+	relDev, err := CreateMouse("/dev/uinput", []byte("Test Basic Mouse"))
+	if err != nil {
+		t.Fatalf("Failed to create the virtual mouse. Last error was: %s\n", err)
+	}
+	relDev.Close()
+
+	err = relDev.MiddleClick()
+	if err == nil {
+		t.Fatalf("Expected error due to closed device, but no error was returned.")
+	}
+}
+
+func TestMouseMiddlePressFailsIfDeviceIsClosed(t *testing.T) {
+	relDev, err := CreateMouse("/dev/uinput", []byte("Test Basic Mouse"))
+	if err != nil {
+		t.Fatalf("Failed to create the virtual mouse. Last error was: %s\n", err)
+	}
+	relDev.Close()
+
+	err = relDev.MiddlePress()
+	if err == nil {
+		t.Fatalf("Expected error due to closed device, but no error was returned.")
+	}
+}
+
+func TestVMouse_MiddleReleaseFailsIfDeviceIsClosed(t *testing.T) {
+	relDev, err := CreateMouse("/dev/uinput", []byte("Test Basic Mouse"))
+	if err != nil {
+		t.Fatalf("Failed to create the virtual mouse. Last error was: %s\n", err)
+	}
+	relDev.Close()
+
+	err = relDev.MiddleRelease()
 	if err == nil {
 		t.Fatalf("Expected error due to closed device, but no error was returned.")
 	}
