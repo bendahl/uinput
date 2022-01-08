@@ -61,7 +61,7 @@ func TestBasicMouseMoves(t *testing.T) {
 
 	err = relDev.LeftPress()
 	if err != nil {
-		t.Fatalf("Failed to perform left key isPress. Last error was: %s\n", err)
+		t.Fatalf("Failed to perform left key press. Last error was: %s\n", err)
 	}
 
 	err = relDev.LeftRelease()
@@ -71,7 +71,7 @@ func TestBasicMouseMoves(t *testing.T) {
 
 	err = relDev.RightPress()
 	if err != nil {
-		t.Fatalf("Failed to perform right key isPress. Last error was: %s\n", err)
+		t.Fatalf("Failed to perform right key press. Last error was: %s\n", err)
 	}
 
 	err = relDev.RightRelease()
@@ -81,7 +81,7 @@ func TestBasicMouseMoves(t *testing.T) {
 
 	err = relDev.MiddlePress()
 	if err != nil {
-		t.Fatalf("Failed to perform middle key isPress. Last error was: %s\n", err)
+		t.Fatalf("Failed to perform middle key press. Last error was: %s\n", err)
 	}
 
 	err = relDev.MiddleRelease()
