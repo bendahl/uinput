@@ -117,6 +117,8 @@ func main() {
 	mouse.LeftClick()
 	// click right (depending on context a context menu may appear)
 	mouse.RightClick()
+	// click middle (usually the scroll wheel)
+	mouse.MiddleClick()
 
 	// hold down left mouse button
 	mouse.LeftPress()

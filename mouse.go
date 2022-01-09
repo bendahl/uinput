@@ -33,6 +33,9 @@ type Mouse interface {
 	// RightClick will issue a right click.
 	RightClick() error
 
+	// MiddleClick will issue a middle click.
+	MiddleClick() error
+
 	// LeftPress will simulate a press of the left mouse button. Note that the button will not be released until
 	// LeftRelease is invoked.
 	LeftPress() error
@@ -46,6 +49,13 @@ type Mouse interface {
 
 	// RightRelease will simulate the release of the right mouse button.
 	RightRelease() error
+
+	// MiddlePress will simulate the press of the middle mouse button. Note that the button will not be released until
+	// MiddleRelease is invoked.
+	MiddlePress() error
+
+	// MiddleRelease will simulate the release of the middle mouse button.
+	MiddleRelease() error
 
 	// Wheel will simulate a wheel movement.
 	Wheel(horizontal bool, delta int32) error
@@ -143,6 +153,16 @@ func (vRel vMouse) RightClick() error {
 	return sendBtnEvent(vRel.deviceFile, []int{evBtnRight}, btnStateReleased)
 }
 
+// MiddleClick will issue a MiddleClick
+func (vRel vMouse) MiddleClick() error {
+	err := sendBtnEvent(vRel.deviceFile, []int{evBtnMiddle}, btnStatePressed)
+	if err != nil {
+		return fmt.Errorf("Failed to issue the MiddleClick event: %v", err)
+	}
+
+	return sendBtnEvent(vRel.deviceFile, []int{evBtnMiddle}, btnStateReleased)
+}
+
 // LeftPress will simulate a press of the left mouse button. Note that the button will not be released until
 // LeftRelease is invoked.
 func (vRel vMouse) LeftPress() error {
@@ -163,6 +183,17 @@ func (vRel vMouse) RightPress() error {
 // RightRelease will simulate the release of the right mouse button.
 func (vRel vMouse) RightRelease() error {
 	return sendBtnEvent(vRel.deviceFile, []int{evBtnRight}, btnStateReleased)
+}
+
+// MiddlePress will simulate the press of the middle mouse button. Note that the button will not be released until
+// MiddleRelease is invoked.
+func (vRel vMouse) MiddlePress() error {
+	return sendBtnEvent(vRel.deviceFile, []int{evBtnMiddle}, btnStatePressed)
+}
+
+// MiddleRelease will simulate the release of the middle mouse button.
+func (vRel vMouse) MiddleRelease() error {
+	return sendBtnEvent(vRel.deviceFile, []int{evBtnMiddle}, btnStateReleased)
 }
 
 // Wheel will simulate a wheel movement.
@@ -191,8 +222,8 @@ func createMouse(path string, name []byte) (fd *os.File, err error) {
 		return nil, fmt.Errorf("failed to register key device: %v", err)
 	}
 
-	// register button events (in order to enable left and right click)
-	for _, event := range []int{evBtnLeft, evBtnRight} {
+	// register button events (in order to enable left, right and middle click)
+	for _, event := range []int{evBtnLeft, evBtnRight, evBtnMiddle} {
 		err = ioctl(deviceFile, uiSetKeyBit, uintptr(event))
 		if err != nil {
 			deviceFile.Close()
