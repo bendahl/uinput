@@ -221,6 +221,8 @@ Thanks robpre and MetalBlueberry for your valuable input!
 
 2021-03-25: Release v1.4.1 fixes a keyboard issue that may affect android systems. See issue #24 for details.
 
+2022-01-09: Release v1.5.0 introduces middle button support for the mouse. Thanks so much to @jbensmann for the great work! Also, thank you @djsavvy for the thorough review! 
+
 TODO
 ----
 The current API can be considered stable and the overall functionality (as originally envisioned) is complete.
