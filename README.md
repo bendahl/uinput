@@ -223,13 +223,13 @@ Thanks robpre and MetalBlueberry for your valuable input!
 
 2022-01-09: Release v1.5.0 introduces middle button support for the mouse. Thanks so much to @jbensmann for the great work! Also, thank you @djsavvy for the thorough review! 
 
+2022-02-11: Release v1.5.1 finally fixes the MoveTo(x, y) function of the touch pad device. Big shout out to @mafredri for this find! Thank you so much! 
+
 TODO
 ----
 The current API can be considered stable and the overall functionality (as originally envisioned) is complete.
 Testing on x86_64 and ARM platforms (specifically the RaspberryPi) has been successful. If you'd like to use this library
 on a different platform that supports Linux, feel free to test it and share the results. This would be greatly appreciated.
-One thing that I'd still like to improve, however, are the test cases. The basic functionality is covered, but more extensive
-testing is something that needs to be worked on.
 
 - [x] Create Tests for the uinput package
 - [x] Migrate code from C to GO
@@ -239,5 +239,4 @@ testing is something that needs to be worked on.
     - [x] x86_64
     - [x] ARMv6 (RaspberryPi)
 - [x] Implement functions to allow mouse button up and down events (for region selects)
-- [ ] Extend test cases
 
