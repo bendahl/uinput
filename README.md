@@ -239,4 +239,5 @@ on a different platform that supports Linux, feel free to test it and share the 
     - [x] x86_64
     - [x] ARMv6 (RaspberryPi)
 - [x] Implement functions to allow mouse button up and down events (for region selects)
+- [ ] Move CI pipeline
 
