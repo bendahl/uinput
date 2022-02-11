@@ -112,11 +112,11 @@ func (vTouch vTouchPad) RightRelease() error {
 }
 
 func (vTouch vTouchPad) TouchDown() error {
-	return sendBtnEvent(vTouch.deviceFile, []int{evBtnTouch, evBtnToolFinger}, btnStatePressed)
+	return sendBtnEvent(vTouch.deviceFile, []int{evBtnTouch}, btnStatePressed)
 }
 
 func (vTouch vTouchPad) TouchUp() error {
-	return sendBtnEvent(vTouch.deviceFile, []int{evBtnTouch, evBtnToolFinger}, btnStateReleased)
+	return sendBtnEvent(vTouch.deviceFile, []int{evBtnTouch}, btnStateReleased)
 }
 
 func (vTouch vTouchPad) Close() error {
@@ -135,7 +135,7 @@ func createTouchPad(path string, name []byte, minX int32, maxX int32, minY int32
 		return nil, fmt.Errorf("failed to register key device: %v", err)
 	}
 	// register button events (in order to enable left and right click)
-	for _, event := range []int{evBtnLeft, evBtnRight, evBtnTouch, evBtnToolFinger} {
+	for _, event := range []int{evBtnLeft, evBtnRight, evBtnTouch} {
 		err = ioctl(deviceFile, uiSetKeyBit, uintptr(event))
 		if err != nil {
 			deviceFile.Close()
