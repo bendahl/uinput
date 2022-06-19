@@ -11,7 +11,7 @@ jobs:
   test:
     strategy:
       matrix:
-        go-version: [1.16.x, 1.17.x, 1.18.x]
+        go-version: [1.18.x]
         platform: [ubuntu-latest]
     runs-on: ${{ matrix.platform }}
     steps:
@@ -23,7 +23,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Setup udev device correctly
-        run: echo KERNEL==\"uinput\", GROUP=\"$USER\", MODE:=\"0660\" | sudo tee /etc/udev/rules.d/99-$USER.rules && sudo udevadm trigger
+        run: | 
+          echo KERNEL==\"uinput\", GROUP=\"$USER\", MODE:=\"0660\" | sudo tee /etc/udev/rules.d/99-$USER.rules 
+          sudo udevadm trigger
+          sudo udevadm info /dev/uinput
       - name: Run tests
         run: go test -coverprofile=coverage.txt -covermode=atomic
       - name: Upload coverage
