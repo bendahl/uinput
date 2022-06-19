@@ -25,7 +25,7 @@ jobs:
       - name: Setup udev device correctly
         run: | 
           sudo modprobe -i uinput
-          echo KERNEL==\"uinput\", GROUP=\"$USER\", MODE:=\"0660\" | sudo tee /etc/udev/rules.d/99-$USER.rules 
+          echo KERNEL==\"uinput\", GROUP=\"$USER\", MODE:=\"0666\" | sudo tee /etc/udev/rules.d/99-$USER.rules 
           sudo udevadm trigger
           sudo udevadm info /dev/uinput
       - name: Run tests
