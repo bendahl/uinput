@@ -60,6 +60,9 @@ type Mouse interface {
 	// Wheel will simulate a wheel movement.
 	Wheel(horizontal bool, delta int32) error
 
+	// FetchSysPath will return the syspath to the device file.
+	FetchSyspath() (string, error)
+
 	io.Closer
 }
 
@@ -281,4 +284,8 @@ func assertNotNegative(val int32) error {
 		return fmt.Errorf("%v is out of range. Expected a positive or zero value", val)
 	}
 	return nil
+}
+
+func (vRel vMouse) FetchSyspath() (string, error) {
+	return fetchSyspath(vRel.deviceFile)
 }

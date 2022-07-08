@@ -382,3 +382,20 @@ func TestMouseWheelFailsIfDeviceIsClosed(t *testing.T) {
 		t.Fatalf("Expected error due to closed device, but no error was returned.")
 	}
 }
+
+func TestMouseSyspath(t *testing.T) {
+	relDev, err := CreateMouse("/dev/uinput", []byte("Test Basic Mouse"))
+	if err != nil {
+		t.Fatalf("Failed to create the virtual mouse. Last error was: %s\n", err)
+	}
+
+	sysPath, err := relDev.FetchSyspath()
+	if err != nil {
+		t.Fatalf("Failed to fetch syspath. Last error was: %s\n", err)
+	}
+
+	if sysPath[:32] != "/sys/devices/virtual/input/input" {
+		t.Fatalf("Expected syspath to start with /sys/devices/virtual/input/input, but got %s", sysPath)
+	}
+	t.Logf("Syspath: %s", sysPath)
+}

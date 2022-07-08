@@ -21,6 +21,9 @@ type Keyboard interface {
 	// The key can be any of the predefined keycodes from keycodes.go.
 	KeyUp(key int) error
 
+	// FetchSysPath will return the syspath to the device file.
+	FetchSyspath() (string, error)
+
 	io.Closer
 }
 
@@ -122,4 +125,8 @@ func createVKeyboardDevice(path string, name []byte) (fd *os.File, err error) {
 
 func keyCodeInRange(key int) bool {
 	return key >= keyReserved && key <= keyMax
+}
+
+func (vk vKeyboard) FetchSyspath() (string, error) {
+	return fetchSyspath(vk.deviceFile)
 }

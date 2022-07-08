@@ -39,6 +39,9 @@ type TouchPad interface {
 	// TouchUp will end or ,more precisely, unset the touch event issued by TouchDown
 	TouchUp() error
 
+	// FetchSysPath will return the syspath to the device file.
+	FetchSyspath() (string, error)
+
 	io.Closer
 }
 
@@ -209,4 +212,8 @@ func sendAbsEvent(deviceFile *os.File, xPos int32, yPos int32) error {
 	}
 
 	return syncEvents(deviceFile)
+}
+
+func (vTouch vTouchPad) FetchSyspath() (string, error) {
+	return fetchSyspath(vTouch.deviceFile)
 }
