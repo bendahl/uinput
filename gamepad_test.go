@@ -13,8 +13,8 @@ func TestInfiniteKonami(t *testing.T) {
 		t.Fatalf("Failed to create the virtual gamepad. Last error was: %s\n", err)
 	}
 
-	for {
-		for range []int{0, 0} {
+	for i := 0; i < 10; i++ {
+		for j := 0; j < 3; j++ {
 			err = vg.ButtonPress(uinput.ButtonDpadUp)
 			if err != nil {
 				t.Fatalf("Failed to send button press. Last error was: %s\n", err)
@@ -28,7 +28,7 @@ func TestInfiniteKonami(t *testing.T) {
 			sleepForaBit()
 		}
 
-		for range []int{0, 0} {
+		for j := 0; j < 3; j++ {
 			err = vg.ButtonPress(uinput.ButtonDpadLeft)
 			if err != nil {
 				t.Fatalf("Failed to send button press. Last error was: %s\n", err)
@@ -96,9 +96,6 @@ func TestAxisMovement(t *testing.T) {
 	err = vg.RightStickMove(0.2, 1.0)
 	if err != nil {
 		t.Fatalf("Failed to send axis event. Last error was: %s\n", err)
-	}
-
-	for {
 	}
 }
 
