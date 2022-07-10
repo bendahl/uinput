@@ -221,12 +221,12 @@ func (vg vGamepad) sendHatEvent(direction HatDirection) error {
 		}
 	case HatLeft:
 		{
-			event = absHat0Y
+			event = absHat0X
 			value = -1
 		}
 	case HatRight:
 		{
-			event = absHat0Y
+			event = absHat0X
 			value = 1
 		}
 	case ReleaseHatUp:
@@ -241,12 +241,12 @@ func (vg vGamepad) sendHatEvent(direction HatDirection) error {
 		}
 	case ReleaseHatLeft:
 		{
-			event = absHat0Y
+			event = absHat0X
 			value = 0
 		}
 	case ReleaseHatRight:
 		{
-			event = absHat0Y
+			event = absHat0X
 			value = 0
 		}
 	default:
