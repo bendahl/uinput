@@ -188,3 +188,20 @@ func TestKeyDownFailsIfDeviceIsClosed(t *testing.T) {
 		t.Fatalf("Expected KeyPress to fail, but no error was returned.")
 	}
 }
+
+func TestKeyboardSyspath(t *testing.T) {
+	vk, err := CreateKeyboard("/dev/uinput", []byte("Test Basic Keyboard"))
+	if err != nil {
+		t.Fatalf("Failed to create the virtual keyboard. Last error was: %s\n", err)
+	}
+
+	sysPath, err := vk.FetchSyspath()
+	if err != nil {
+		t.Fatalf("Failed to fetch syspath. Last error was: %s\n", err)
+	}
+
+	if sysPath[:32] != "/sys/devices/virtual/input/input" {
+		t.Fatalf("Expected syspath to start with /sys/devices/virtual/input/input, but got %s", sysPath)
+	}
+	t.Logf("Syspath: %s", sysPath)
+}

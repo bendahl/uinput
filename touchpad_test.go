@@ -234,3 +234,21 @@ func TestSingleTouchEvent(t *testing.T) {
 	}
 
 }
+
+func TestTouchPadSyspath(t *testing.T) {
+	dev, err := CreateTouchPad("/dev/uinput", []byte("TouchPad"), 0, 1024, 0, 768)
+	if err != nil {
+		t.Fatalf("Failed to create the virtual touch pad. Last error was: %s\n", err)
+	}
+
+	sysPath, err := dev.FetchSyspath()
+	if err != nil {
+		t.Fatalf("Failed to fetch syspath. Last error was: %s\n", err)
+	}
+
+	if sysPath[:32] != "/sys/devices/virtual/input/input" {
+		t.Fatalf("Expected syspath to start with /sys/devices/virtual/input/input, but got %s", sysPath)
+	}
+
+	t.Logf("Syspath: %s", sysPath)
+}

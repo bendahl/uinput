@@ -84,6 +84,7 @@ import (
 	"os"
 	"syscall"
 	"time"
+	"unsafe"
 )
 
 func validateDevicePath(path string) error {
@@ -166,6 +167,16 @@ func closeDevice(deviceFile *os.File) (err error) {
 
 func releaseDevice(deviceFile *os.File) (err error) {
 	return ioctl(deviceFile, uiDevDestroy, uintptr(0))
+}
+
+func fetchSyspath(deviceFile *os.File) (string, error) {
+	sysInputDir := "/sys/devices/virtual/input/"
+	// 64 for name + 1 for null byte
+	path := make([]byte, 65)
+	err := ioctl(deviceFile, uiGetSysname, uintptr(unsafe.Pointer(&path[0])))
+
+	sysInputDir = sysInputDir + string(path)
+	return sysInputDir, err
 }
 
 // Note that mice and touch pads do have buttons as well. Therefore, this function is used

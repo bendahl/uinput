@@ -7,11 +7,15 @@ const (
 	uinputMaxNameSize = 80
 	uiDevCreate       = 0x5501
 	uiDevDestroy      = 0x5502
-	uiSetEvBit        = 0x40045564
-	uiSetKeyBit       = 0x40045565
-	uiSetRelBit       = 0x40045566
-	uiSetAbsBit       = 0x40045567
-	busUsb            = 0x03
+	// this is for 64 length buffer to store name
+	// for another length generate using : (len << 16) | 0x8000552C
+	uiGetSysname = 0x8041552c
+	uiSetEvBit   = 0x40045564
+	uiSetKeyBit  = 0x40045565
+
+	uiSetRelBit = 0x40045566
+	uiSetAbsBit = 0x40045567
+	busUsb      = 0x03
 )
 
 // input event codes as specified in input-event-codes.h
