@@ -72,43 +72,43 @@ func (vTouch vTouchPad) MoveTo(x int32, y int32) error {
 }
 
 func (vTouch vTouchPad) LeftClick() error {
-	err := sendBtnEvent(vTouch.deviceFile, []int{evBtnLeft}, btnStatePressed)
+	err := sendBtnEvent(vTouch.deviceFile, []int{evMouseBtnLeft}, btnStatePressed)
 	if err != nil {
 		return fmt.Errorf("Failed to issue the LeftClick event: %v", err)
 	}
 
-	return sendBtnEvent(vTouch.deviceFile, []int{evBtnLeft}, btnStateReleased)
+	return sendBtnEvent(vTouch.deviceFile, []int{evMouseBtnLeft}, btnStateReleased)
 }
 
 func (vTouch vTouchPad) RightClick() error {
-	err := sendBtnEvent(vTouch.deviceFile, []int{evBtnRight}, btnStatePressed)
+	err := sendBtnEvent(vTouch.deviceFile, []int{evMouseBtnRight}, btnStatePressed)
 	if err != nil {
 		return fmt.Errorf("Failed to issue the RightClick event: %v", err)
 	}
 
-	return sendBtnEvent(vTouch.deviceFile, []int{evBtnRight}, btnStateReleased)
+	return sendBtnEvent(vTouch.deviceFile, []int{evMouseBtnRight}, btnStateReleased)
 }
 
 // LeftPress will simulate a press of the left mouse button. Note that the button will not be released until
 // LeftRelease is invoked.
 func (vTouch vTouchPad) LeftPress() error {
-	return sendBtnEvent(vTouch.deviceFile, []int{evBtnLeft}, btnStatePressed)
+	return sendBtnEvent(vTouch.deviceFile, []int{evMouseBtnLeft}, btnStatePressed)
 }
 
 // LeftRelease will simulate the release of the left mouse button.
 func (vTouch vTouchPad) LeftRelease() error {
-	return sendBtnEvent(vTouch.deviceFile, []int{evBtnLeft}, btnStateReleased)
+	return sendBtnEvent(vTouch.deviceFile, []int{evMouseBtnLeft}, btnStateReleased)
 }
 
 // RightPress will simulate the press of the right mouse button. Note that the button will not be released until
 // RightRelease is invoked.
 func (vTouch vTouchPad) RightPress() error {
-	return sendBtnEvent(vTouch.deviceFile, []int{evBtnRight}, btnStatePressed)
+	return sendBtnEvent(vTouch.deviceFile, []int{evMouseBtnRight}, btnStatePressed)
 }
 
 // RightRelease will simulate the release of the right mouse button.
 func (vTouch vTouchPad) RightRelease() error {
-	return sendBtnEvent(vTouch.deviceFile, []int{evBtnRight}, btnStateReleased)
+	return sendBtnEvent(vTouch.deviceFile, []int{evMouseBtnRight}, btnStateReleased)
 }
 
 func (vTouch vTouchPad) TouchDown() error {
@@ -135,7 +135,7 @@ func createTouchPad(path string, name []byte, minX int32, maxX int32, minY int32
 		return nil, fmt.Errorf("failed to register key device: %v", err)
 	}
 	// register button events (in order to enable left and right click)
-	for _, event := range []int{evBtnLeft, evBtnRight, evBtnTouch} {
+	for _, event := range []int{evMouseBtnLeft, evMouseBtnRight, evBtnTouch} {
 		err = ioctl(deviceFile, uiSetKeyBit, uintptr(event))
 		if err != nil {
 			deviceFile.Close()
@@ -178,7 +178,7 @@ func createTouchPad(path string, name []byte, minX int32, maxX int32, minY int32
 			Absmax: absMax})
 }
 
-func sendAbsEvent(deviceFile *os.File, xPos int32, yPos int32) error {
+func sendAbsEvent(deviceFile *os.File, xPos int32, yPos int32) error { // TODO: Perhaps move this to a more generic function? This conflicts with the gamepad ABS events which only have one value.
 	var ev [2]inputEvent
 	ev[0].Type = evAbs
 	ev[0].Code = absX

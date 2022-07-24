@@ -247,4 +247,29 @@ const (
 	KeyRfkill           = 247 /*KeyThatControlsAllRadios*/
 	KeyMicmute          = 248 /*Mute/UnmuteTheMicrophone*/
 	keyMax              = 248 // highest key currently defined in this keyboard api
+
+	// Gamepad button events TODO: Consider moving to a separate file?
+	ButtonGamepad = 0x130
+
+	ButtonSouth = 0x130 // A / X
+	ButtonEast  = 0x131 // X / Square
+	ButtonNorth = 0x133 // Y / Triangle
+	ButtonWest  = 0x134 // B / Circle
+
+	ButtonBumperLeft   = 0x136 // L1
+	ButtonBumperRight  = 0x137 // R1
+	ButtonTriggerLeft  = 0x138 // L2
+	ButtonTriggerRight = 0x139 // R2
+	ButtonThumbLeft    = 0x13d // L3
+	ButtonThumbRight   = 0x13e // R3
+
+	ButtonSelect = 0x13a
+	ButtonStart  = 0x13b
+
+	ButtonDpadUp    = 0x220
+	ButtonDpadDown  = 0x221
+	ButtonDpadLeft  = 0x222
+	ButtonDpadRight = 0x223
+
+	ButtonMode = 0x13c // This is the special button that usually bears the Xbox or Playstation logo
 )
