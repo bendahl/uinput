@@ -18,11 +18,13 @@ const (
 	HatDown
 	HatLeft
 	HatRight
+)
 
-	ReleaseHatUp
-	ReleaseHatDown
-	ReleaseHatLeft
-	ReleaseHatRight
+type HatAction uint
+
+const (
+	Press HatAction = iota + 1
+	Release
 )
 
 // A Gamepad is a hybrid key / absolute change event output device.
@@ -141,11 +143,11 @@ func (vg vGamepad) LeftStickMove(x, y float32) error {
 }
 
 func (vg vGamepad) HatPress(direction HatDirection) error {
-	return vg.sendHatEvent(direction)
+	return vg.sendHatEvent(direction, Press)
 }
 
 func (vg vGamepad) HatRelease(direction HatDirection) error {
-	return vg.sendHatEvent(direction)
+	return vg.sendHatEvent(direction, Release)
 }
 
 func (vg vGamepad) syncEvents() error {
@@ -203,11 +205,10 @@ func (vg vGamepad) sendStickEvent(values map[uint16]float32) error {
 	return vg.syncEvents()
 }
 
-func (vg vGamepad) sendHatEvent(direction HatDirection) error {
+func (vg vGamepad) sendHatEvent(direction HatDirection, action HatAction) error {
 	var event uint16
 	var value int32
 
-	// TODO: This is a -questionable- (terrible) way to handle this, I'm open to other ideas.
 	switch int(direction) {
 	case HatUp:
 		{
@@ -229,30 +230,14 @@ func (vg vGamepad) sendHatEvent(direction HatDirection) error {
 			event = absHat0X
 			value = 1
 		}
-	case ReleaseHatUp:
-		{
-			event = absHat0Y
-			value = 0
-		}
-	case ReleaseHatDown:
-		{
-			event = absHat0Y
-			value = 0
-		}
-	case ReleaseHatLeft:
-		{
-			event = absHat0X
-			value = 0
-		}
-	case ReleaseHatRight:
-		{
-			event = absHat0X
-			value = 0
-		}
 	default:
 		{
 			return errors.New("Failed to parse input direction")
 		}
+	}
+
+	if action == Release {
+		value = 0
 	}
 
 	ev := inputEvent{
