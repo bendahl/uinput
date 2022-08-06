@@ -248,7 +248,6 @@ const (
 	KeyMicmute          = 248 /*Mute/UnmuteTheMicrophone*/
 	keyMax              = 248 // highest key currently defined in this keyboard api
 
-	// Gamepad button events TODO: Consider moving to a separate file?
 	ButtonGamepad = 0x130
 
 	ButtonSouth = 0x130 // A / X

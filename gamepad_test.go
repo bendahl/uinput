@@ -102,35 +102,35 @@ func TestHatMovement(t *testing.T) {
 		t.Fatalf("Failed to create the virtual gamepad. Last error was: %s\n", err)
 	}
 
-	err = vg.HatPress(HatDirection(HatUp))
+	err = vg.HatPress(HatUp)
 	if err != nil {
 		t.Fatalf("Falied to move hat up")
 	}
-	err = vg.HatRelease(HatDirection(HatUp))
+	err = vg.HatRelease(HatUp)
 	if err != nil {
 		t.Fatalf("Failed to release hat")
 	}
-	err = vg.HatPress(HatDirection(HatRight))
+	err = vg.HatPress(HatRight)
 	if err != nil {
 		t.Fatalf("Falied to move hat right")
 	}
-	err = vg.HatRelease(HatDirection(HatRight))
+	err = vg.HatRelease(HatRight)
 	if err != nil {
 		t.Fatalf("Failed to release hat")
 	}
-	err = vg.HatPress(HatDirection(HatDown))
+	err = vg.HatPress(HatDown)
 	if err != nil {
 		t.Fatalf("Falied to move hat down")
 	}
-	err = vg.HatRelease(HatDirection(HatDown))
+	err = vg.HatRelease(HatDown)
 	if err != nil {
 		t.Fatalf("Failed to release hat")
 	}
-	err = vg.HatPress(HatDirection(HatLeft))
+	err = vg.HatPress(HatLeft)
 	if err != nil {
 		t.Fatalf("Falied to move hat left")
 	}
-	err = vg.HatRelease(HatDirection(HatLeft))
+	err = vg.HatRelease(HatLeft)
 	if err != nil {
 		t.Fatalf("Failed to release hat")
 	}

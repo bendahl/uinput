@@ -10,53 +10,56 @@ import (
 
 const MaximumAxisValue = 32767
 
-// These are the directions and values for hat events.
+// HatDirection specifies the direction of hat movement
 type HatDirection int
 
 const (
-	HatUp int = iota + 1
+	HatUp HatDirection = iota + 1
 	HatDown
 	HatLeft
 	HatRight
 )
 
-type HatAction uint
+type HatAction int
 
 const (
 	Press HatAction = iota + 1
 	Release
 )
 
-// A Gamepad is a hybrid key / absolute change event output device.
-// Is is used to enable a priogram to simulate gamepad input events.
+// Gamepad is a hybrid key / absolute change event output device.
+// It used to enable a program to simulate gamepad input events.
 type Gamepad interface {
-	// KeyPress will cause the key to be pressed and immediately released.
+	// ButtonPress will cause the button to be pressed and immediately released.
 	ButtonPress(key int) error
 
-	// ButtonDown will send a keypress event to an existing gamepad device.
+	// ButtonDown will send a button-press event to an existing gamepad device.
 	// The key can be any of the predefined keycodes from keycodes.go.
 	// Note that the key will be "held down" until "KeyUp" is called.
 	ButtonDown(key int) error
 
-	// ButtonUp will send a keyrelease event to an existing gamepad device.
+	// ButtonUp will send a button-release event to an existing gamepad device.
 	// The key can be any of the predefined keycodes from keycodes.go.
 	ButtonUp(key int) error
 
-	////// The following stick events take in normalized values (-1.0:1.0)
-	// These methods will move the left stick's position to the given value.
+	// LeftStickMoveX performs a movement of the left stick along the x-axis
 	LeftStickMoveX(value float32) error
+	// LeftStickMoveY performs a movement of the left stick along the y-axis
 	LeftStickMoveY(value float32) error
 
-	// These methods will move the right stick's position to the given value.
+	// RightStickMoveX performs a movement of the right stick along the x-axis
 	RightStickMoveX(value float32) error
+	// RightStickMoveY performs a movement of the right stick along the y-axis
 	RightStickMoveY(value float32) error
 
-	// These methods will move the stick's position to the given X and Y positions.
+	// LeftStickMove moves the left stick along the x and y-axis
 	LeftStickMove(x, y float32) error
+	// RightStickMove moves the right stick along the x and y-axis
 	RightStickMove(x, y float32) error
 
-	// These are alternative methods to send dpad events.
+	// HatPress will issue a hat-press event in the given direction
 	HatPress(direction HatDirection) error
+	// HatRelease will issue a hat-release event in the given direction
 	HatRelease(direction HatDirection) error
 
 	// Sends out a SYN event.
@@ -209,7 +212,7 @@ func (vg vGamepad) sendHatEvent(direction HatDirection, action HatAction) error 
 	var event uint16
 	var value int32
 
-	switch int(direction) {
+	switch direction {
 	case HatUp:
 		{
 			event = absHat0Y
@@ -232,7 +235,7 @@ func (vg vGamepad) sendHatEvent(direction HatDirection, action HatAction) error 
 		}
 	default:
 		{
-			return errors.New("Failed to parse input direction")
+			return errors.New("failed to parse input direction")
 		}
 	}
 
@@ -291,8 +294,8 @@ func createVGamepadDevice(path string, name []byte, vendor uint16, product uint1
 		ButtonMode,
 	}
 
-	// This array is for the absolute events for the gamepad device.
-	abs_events := []uint16{
+	// absEvents is for the absolute events for the gamepad device.
+	absEvents := []uint16{
 		absX,
 		absY,
 		absZ,
@@ -311,14 +314,14 @@ func createVGamepadDevice(path string, name []byte, vendor uint16, product uint1
 	// register button events
 	err = registerDevice(deviceFile, uintptr(evKey))
 	if err != nil {
-		deviceFile.Close()
+		_ = deviceFile.Close()
 		return nil, fmt.Errorf("failed to register virtual gamepad device: %v", err)
 	}
 
 	for _, code := range keys {
 		err = ioctl(deviceFile, uiSetKeyBit, uintptr(code))
 		if err != nil {
-			deviceFile.Close()
+			_ = deviceFile.Close()
 			return nil, fmt.Errorf("failed to register key number %d: %v", code, err)
 		}
 	}
@@ -326,14 +329,14 @@ func createVGamepadDevice(path string, name []byte, vendor uint16, product uint1
 	// register absolute events
 	err = registerDevice(deviceFile, uintptr(evAbs))
 	if err != nil {
-		deviceFile.Close()
+		_ = deviceFile.Close()
 		return nil, fmt.Errorf("failed to register absolute event input device: %v", err)
 	}
 
-	for _, event := range abs_events {
+	for _, event := range absEvents {
 		err = ioctl(deviceFile, uiSetAbsBit, uintptr(event))
 		if err != nil {
-			deviceFile.Close()
+			_ = deviceFile.Close()
 			return nil, fmt.Errorf("failed to register absolute event %v: %v", event, err)
 		}
 	}

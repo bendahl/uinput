@@ -39,7 +39,7 @@ type TouchPad interface {
 	// TouchUp will end or ,more precisely, unset the touch event issued by TouchDown
 	TouchUp() error
 
-	// FetchSysPath will return the syspath to the device file.
+	// FetchSyspath will return the syspath to the device file.
 	FetchSyspath() (string, error)
 
 	io.Closer
@@ -50,7 +50,7 @@ type vTouchPad struct {
 	deviceFile *os.File
 }
 
-// CreateTouchPad will create a new touch pad device. note that you will need to define the x and y axis boundaries
+// CreateTouchPad will create a new touchpad device. note that you will need to define the x and y-axis boundaries
 // (min and max) within which the cursor maybe moved around.
 func CreateTouchPad(path string, name []byte, minX int32, maxX int32, minY int32, maxY int32) (TouchPad, error) {
 	err := validateDevicePath(path)
@@ -77,7 +77,7 @@ func (vTouch vTouchPad) MoveTo(x int32, y int32) error {
 func (vTouch vTouchPad) LeftClick() error {
 	err := sendBtnEvent(vTouch.deviceFile, []int{evMouseBtnLeft}, btnStatePressed)
 	if err != nil {
-		return fmt.Errorf("Failed to issue the LeftClick event: %v", err)
+		return fmt.Errorf("failed to issue the LeftClick event: %v", err)
 	}
 
 	return sendBtnEvent(vTouch.deviceFile, []int{evMouseBtnLeft}, btnStateReleased)
@@ -86,7 +86,7 @@ func (vTouch vTouchPad) LeftClick() error {
 func (vTouch vTouchPad) RightClick() error {
 	err := sendBtnEvent(vTouch.deviceFile, []int{evMouseBtnRight}, btnStatePressed)
 	if err != nil {
-		return fmt.Errorf("Failed to issue the RightClick event: %v", err)
+		return fmt.Errorf("failed to issue the RightClick event: %v", err)
 	}
 
 	return sendBtnEvent(vTouch.deviceFile, []int{evMouseBtnRight}, btnStateReleased)
@@ -134,29 +134,29 @@ func createTouchPad(path string, name []byte, minX int32, maxX int32, minY int32
 
 	err = registerDevice(deviceFile, uintptr(evKey))
 	if err != nil {
-		deviceFile.Close()
+		_ = deviceFile.Close()
 		return nil, fmt.Errorf("failed to register key device: %v", err)
 	}
 	// register button events (in order to enable left and right click)
 	for _, event := range []int{evMouseBtnLeft, evMouseBtnRight, evBtnTouch} {
 		err = ioctl(deviceFile, uiSetKeyBit, uintptr(event))
 		if err != nil {
-			deviceFile.Close()
+			_ = deviceFile.Close()
 			return nil, fmt.Errorf("failed to register button event %v: %v", event, err)
 		}
 	}
 
 	err = registerDevice(deviceFile, uintptr(evAbs))
 	if err != nil {
-		deviceFile.Close()
+		_ = deviceFile.Close()
 		return nil, fmt.Errorf("failed to register absolute axis input device: %v", err)
 	}
 
-	// register x and y axis events
+	// register x and y-axis events
 	for _, event := range []int{absX, absY} {
 		err = ioctl(deviceFile, uiSetAbsBit, uintptr(event))
 		if err != nil {
-			deviceFile.Close()
+			_ = deviceFile.Close()
 			return nil, fmt.Errorf("failed to register absolute axis event %v: %v", event, err)
 		}
 	}
