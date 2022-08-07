@@ -2,6 +2,7 @@ package uinput
 
 import (
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -26,5 +27,21 @@ func TestValidateUinputNameEmptyNamePanics(t *testing.T) {
 	err := validateUinputName(nil)
 	if err.Error() != expected {
 		t.Fatalf("Expected: %s\nActual: %s", expected, err)
+	}
+}
+
+func TestFailedDeviceFileCreationGeneratesError(t *testing.T) {
+	expected := "could not open device file"
+	_, err := createDeviceFile("/root/testfile")
+	if err == nil || err.Error() != expected {
+		t.Fatalf("expected error, but got none")
+	}
+}
+
+func TestNonExistentDeviceFileCausesError(t *testing.T) {
+	expected := "failed to write user device buffer:"
+	_, err := createUsbDevice(nil, uinputUserDev{})
+	if err == nil || !strings.Contains(err.Error(), expected) {
+		t.Fatalf("expected error, but got none")
 	}
 }

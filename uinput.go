@@ -122,12 +122,11 @@ func createDeviceFile(path string) (fd *os.File, err error) {
 func registerDevice(deviceFile *os.File, evType uintptr) error {
 	err := ioctl(deviceFile, uiSetEvBit, evType)
 	if err != nil {
+		defer deviceFile.Close()
 		err = releaseDevice(deviceFile)
 		if err != nil {
-			deviceFile.Close()
 			return fmt.Errorf("failed to close device: %v", err)
 		}
-		deviceFile.Close()
 		return fmt.Errorf("invalid file handle returned from ioctl: %v", err)
 	}
 	return nil
@@ -137,18 +136,18 @@ func createUsbDevice(deviceFile *os.File, dev uinputUserDev) (fd *os.File, err e
 	buf := new(bytes.Buffer)
 	err = binary.Write(buf, binary.LittleEndian, dev)
 	if err != nil {
-		deviceFile.Close()
+		_ = deviceFile.Close()
 		return nil, fmt.Errorf("failed to write user device buffer: %v", err)
 	}
 	_, err = deviceFile.Write(buf.Bytes())
 	if err != nil {
-		deviceFile.Close()
+		_ = deviceFile.Close()
 		return nil, fmt.Errorf("failed to write uidev struct to device file: %v", err)
 	}
 
 	err = ioctl(deviceFile, uiDevCreate, uintptr(0))
 	if err != nil {
-		deviceFile.Close()
+		_ = deviceFile.Close()
 		return nil, fmt.Errorf("failed to create device: %v", err)
 	}
 
