@@ -175,13 +175,73 @@ func TestGamepadCreationFailsIfNameIsTooLong(t *testing.T) {
 	}
 }
 
+func TestGamepadButtonEventsFailOnClosedDevice(t *testing.T) {
+	gamepad, err := CreateGamepad("/dev/uinput", []byte("Test Gamepad"), 0xDEAD, 0xBEEF)
+	if err != nil {
+		t.Fatalf("Failed to create the virtual gamepad. Last error was: %s\n", err)
+	}
+	_ = gamepad.Close()
+
+	err = gamepad.ButtonUp(1)
+	if err == nil {
+		t.Fatalf("Expected error due to closed device, but no error was returned.")
+	}
+	err = gamepad.ButtonDown(1)
+	if err == nil {
+		t.Fatalf("Expected error due to closed device, but no error was returned.")
+	}
+	err = gamepad.ButtonPress(1)
+	if err == nil {
+		t.Fatalf("Expected error due to closed device, but no error was returned.")
+	}
+}
+
+func TestGamepadHatEventsFailOnClosedDevice(t *testing.T) {
+	gamepad, err := CreateGamepad("/dev/uinput", []byte("Test Gamepad"), 0xDEAD, 0xBEEF)
+	if err != nil {
+		t.Fatalf("Failed to create the virtual gamepad. Last error was: %s\n", err)
+	}
+	_ = gamepad.Close()
+
+	err = gamepad.HatPress(HatUp)
+	if err == nil {
+		t.Fatalf("Expected error due to closed device, but no error was returned.")
+	}
+	err = gamepad.HatRelease(HatUp)
+	if err == nil {
+		t.Fatalf("Expected error due to closed device, but no error was returned.")
+	}
+}
+
 func TestGamepadMoveToFailsOnClosedDevice(t *testing.T) {
 	gamepad, err := CreateGamepad("/dev/uinput", []byte("Test Gamepad"), 0xDEAD, 0xBEEF)
 	if err != nil {
 		t.Fatalf("Failed to create the virtual gamepad. Last error was: %s\n", err)
 	}
 	_ = gamepad.Close()
+
 	err = gamepad.LeftStickMoveX(1)
+	if err == nil {
+		t.Fatalf("Expected error due to closed device, but no error was returned.")
+	}
+	err = gamepad.LeftStickMoveY(1)
+	if err == nil {
+		t.Fatalf("Expected error due to closed device, but no error was returned.")
+	}
+	err = gamepad.LeftStickMove(1, 1)
+	if err == nil {
+		t.Fatalf("Expected error due to closed device, but no error was returned.")
+	}
+
+	err = gamepad.RightStickMoveX(1)
+	if err == nil {
+		t.Fatalf("Expected error due to closed device, but no error was returned.")
+	}
+	err = gamepad.RightStickMoveY(1)
+	if err == nil {
+		t.Fatalf("Expected error due to closed device, but no error was returned.")
+	}
+	err = gamepad.RightStickMove(1, 1)
 	if err == nil {
 		t.Fatalf("Expected error due to closed device, but no error was returned.")
 	}
