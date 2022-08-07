@@ -39,9 +39,12 @@ func TestFailedDeviceFileCreationGeneratesError(t *testing.T) {
 }
 
 func TestNonExistentDeviceFileCausesError(t *testing.T) {
-	expected := "failed to write user device buffer:"
+	expected := "failed to write uidev struct to device file:"
 	_, err := createUsbDevice(nil, uinputUserDev{})
-	if err == nil || !strings.Contains(err.Error(), expected) {
+	if err == nil {
 		t.Fatalf("expected error, but got none")
+	}
+	if !strings.Contains(err.Error(), expected) {
+		t.Fatalf("got '%v', but expected '%v'", err.Error(), expected)
 	}
 }
