@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"syscall"
 )
 
 const MaximumAxisValue = 32767
@@ -61,9 +60,6 @@ type Gamepad interface {
 	HatPress(direction HatDirection) error
 	// HatRelease will issue a hat-release event in the given direction
 	HatRelease(direction HatDirection) error
-
-	// Sends out a SYN event.
-	syncEvents() error
 
 	io.Closer
 }
@@ -153,19 +149,6 @@ func (vg vGamepad) HatRelease(direction HatDirection) error {
 	return vg.sendHatEvent(direction, Release)
 }
 
-func (vg vGamepad) syncEvents() error {
-	buf, err := inputEventToBuffer(inputEvent{
-		Time:  syscall.Timeval{Sec: 0, Usec: 0},
-		Type:  evSyn,
-		Code:  uint16(synReport),
-		Value: 0})
-	if err != nil {
-		return fmt.Errorf("writing sync event failed: %v", err)
-	}
-	_, err = vg.deviceFile.Write(buf)
-	return err
-}
-
 func (vg vGamepad) sendStickAxisEvent(absCode uint16, value float32) error {
 	ev := inputEvent{
 		Type:  evAbs,
@@ -183,7 +166,7 @@ func (vg vGamepad) sendStickAxisEvent(absCode uint16, value float32) error {
 		return fmt.Errorf("failed to write abs stick event to device file: %v", err)
 	}
 
-	return vg.syncEvents()
+	return syncEvents(vg.deviceFile)
 }
 
 func (vg vGamepad) sendStickEvent(values map[uint16]float32) error {
@@ -205,7 +188,7 @@ func (vg vGamepad) sendStickEvent(values map[uint16]float32) error {
 		}
 	}
 
-	return vg.syncEvents()
+	return syncEvents(vg.deviceFile)
 }
 
 func (vg vGamepad) sendHatEvent(direction HatDirection, action HatAction) error {
@@ -259,7 +242,7 @@ func (vg vGamepad) sendHatEvent(direction HatDirection, action HatAction) error 
 		return fmt.Errorf("failed to write abs stick event to device file: %v", err)
 	}
 
-	return vg.syncEvents()
+	return syncEvents(vg.deviceFile)
 }
 
 func (vg vGamepad) Close() error {
