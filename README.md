@@ -197,13 +197,6 @@ func main() {
 }
 ```
 
-Experimental APIs (*exp* package)
----------------------------------
-The *exp* sub package in this repo contains experimental functionality that has not yet been finalized. It may therefore be subject to change. 
-You may, of course, take a look and try this out for yourself. 
-The idea behind the *exp* package is to encourage experimentation and help improve/evolve this library without breaking the existing stability guarantees that are true
-for the rest of the existing functionality (outside the *exp* package).
-
 License
 --------
 The package falls under the MIT license. Please see the "LICENSE" file for details.
