@@ -7,12 +7,18 @@ import (
 	"testing"
 )
 
-// This test confirms that all basic mouse events are working as expected.
+// This test confirms that all basic mouse moves are working as expected.
 func TestBasicMouseMoves(t *testing.T) {
 	relDev, err := CreateMouse("/dev/uinput", []byte("Test Basic Mouse"))
 	if err != nil {
 		t.Fatalf("Failed to create the virtual mouse. Last error was: %s\n", err)
 	}
+	defer func(relDev Mouse) {
+		err := relDev.Close()
+		if err != nil {
+			t.Fatalf("failed to close virtual mouse: %v", err)
+		}
+	}(relDev)
 
 	err = relDev.MoveLeft(100)
 	if err != nil {
@@ -43,21 +49,19 @@ func TestBasicMouseMoves(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to perform mouse move using negative coordinates. Last error was: %s\n", err)
 	}
+}
 
-	err = relDev.RightClick()
+func TestMouseButtonPresses(t *testing.T) {
+	relDev, err := CreateMouse("/dev/uinput", []byte("Test Basic Mouse"))
 	if err != nil {
-		t.Fatalf("Failed to perform right click. Last error was: %s\n", err)
+		t.Fatalf("Failed to create the virtual mouse. Last error was: %s\n", err)
 	}
-
-	err = relDev.LeftClick()
-	if err != nil {
-		t.Fatalf("Failed to perform right click. Last error was: %s\n", err)
-	}
-
-	err = relDev.MiddleClick()
-	if err != nil {
-		t.Fatalf("Failed to perform middle click. Last error was: %s\n", err)
-	}
+	defer func(relDev Mouse) {
+		err := relDev.Close()
+		if err != nil {
+			t.Fatalf("failed to close virtual mouse: %v", err)
+		}
+	}(relDev)
 
 	err = relDev.LeftPress()
 	if err != nil {
@@ -88,6 +92,19 @@ func TestBasicMouseMoves(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to perform middle key release. Last error was: %s\n", err)
 	}
+}
+
+func TestVMouse_Wheel(t *testing.T) {
+	relDev, err := CreateMouse("/dev/uinput", []byte("Test Basic Mouse"))
+	if err != nil {
+		t.Fatalf("Failed to create the virtual mouse. Last error was: %s\n", err)
+	}
+	defer func(relDev Mouse) {
+		err := relDev.Close()
+		if err != nil {
+			t.Fatalf("failed to close virtual mouse: %v", err)
+		}
+	}(relDev)
 
 	err = relDev.Wheel(false, 1)
 	if err != nil {
@@ -98,11 +115,35 @@ func TestBasicMouseMoves(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to perform horizontal wheel movement. Last error was: %s\n", err)
 	}
+}
 
-	err = relDev.Close()
+func TestMouseClicks(t *testing.T) {
+	relDev, err := CreateMouse("/dev/uinput", []byte("Test Basic Mouse"))
 	if err != nil {
-		t.Fatalf("Failed to close device. Last error was: %s\n", err)
+		t.Fatalf("Failed to create the virtual mouse. Last error was: %s\n", err)
 	}
+	defer func(relDev Mouse) {
+		err := relDev.Close()
+		if err != nil {
+			t.Fatalf("failed to close virtual mouse: %v", err)
+		}
+	}(relDev)
+
+	err = relDev.RightClick()
+	if err != nil {
+		t.Fatalf("Failed to perform right click. Last error was: %s\n", err)
+	}
+
+	err = relDev.LeftClick()
+	if err != nil {
+		t.Fatalf("Failed to perform right click. Last error was: %s\n", err)
+	}
+
+	err = relDev.MiddleClick()
+	if err != nil {
+		t.Fatalf("Failed to perform middle click. Last error was: %s\n", err)
+	}
+
 }
 
 func TestMouseCreationFailsOnEmptyPath(t *testing.T) {

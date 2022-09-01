@@ -18,34 +18,21 @@ func TestKeysInValidRangeWork(t *testing.T) {
 		t.Fatalf("Failed to create the virtual keyboard. Last error was: %s\n", err)
 	}
 
-	err = vk.KeyPress(keyReserved)
-	if err != nil {
-		t.Fatalf("Failed to send key press. Last error was: %s\n", err)
-	}
+	for _, key := range []int{keyReserved, keyMax} {
+		err = vk.KeyPress(key)
+		if err != nil {
+			t.Fatalf("Failed to send key press. Last error was: %s\n", err)
+		}
 
-	err = vk.KeyDown(keyReserved)
-	if err != nil {
-		t.Fatalf("Failed to send key down event. Last error was: %s\n", err)
-	}
+		err = vk.KeyDown(key)
+		if err != nil {
+			t.Fatalf("Failed to send key down event. Last error was: %s\n", err)
+		}
 
-	err = vk.KeyUp(keyReserved)
-	if err != nil {
-		t.Fatalf("Failed to send key up event. Last error was: %s\n", err)
-	}
-
-	err = vk.KeyPress(keyMax)
-	if err != nil {
-		t.Fatalf("Failed to send key press. Last error was: %s\n", err)
-	}
-
-	err = vk.KeyDown(keyMax)
-	if err != nil {
-		t.Fatalf("Failed to send key down event. Last error was: %s\n", err)
-	}
-
-	err = vk.KeyUp(keyMax)
-	if err != nil {
-		t.Fatalf("Failed to send key up event. Last error was: %s\n", err)
+		err = vk.KeyUp(key)
+		if err != nil {
+			t.Fatalf("Failed to send key up event. Last error was: %s\n", err)
+		}
 	}
 
 	err = vk.Close()

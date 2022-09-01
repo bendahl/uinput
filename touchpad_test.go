@@ -12,6 +12,12 @@ func TestBasicTouchPadMoves(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to create the virtual touch pad. Last error was: %s\n", err)
 	}
+	defer func(absDev TouchPad) {
+		err := absDev.Close()
+		if err != nil {
+			t.Fatalf("Failed to close device. Last error was: %s\n", err)
+		}
+	}(absDev)
 
 	err = absDev.MoveTo(0, 0)
 	if err != nil {
@@ -22,6 +28,21 @@ func TestBasicTouchPadMoves(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to move cursor to position x:100, y:200. Last error was: %s\n", err)
 	}
+
+}
+
+func TestTouchPadClicks(t *testing.T) {
+	absDev, err := CreateTouchPad("/dev/uinput", []byte("Test TouchPad"), 0, 1024, 0, 768)
+	if err != nil {
+		t.Fatalf("Failed to create the virtual touch pad. Last error was: %s\n", err)
+	}
+	defer func(absDev TouchPad) {
+		err := absDev.Close()
+		if err != nil {
+			t.Fatalf("Failed to close device. Last error was: %s\n", err)
+		}
+	}(absDev)
+
 	err = absDev.RightClick()
 	if err != nil {
 		t.Fatalf("Failed to perform right click. Last error was: %s\n", err)
@@ -31,6 +52,20 @@ func TestBasicTouchPadMoves(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to perform right click. Last error was: %s\n", err)
 	}
+
+}
+
+func TestTouchPadButtonPresses(t *testing.T) {
+	absDev, err := CreateTouchPad("/dev/uinput", []byte("Test TouchPad"), 0, 1024, 0, 768)
+	if err != nil {
+		t.Fatalf("Failed to create the virtual touch pad. Last error was: %s\n", err)
+	}
+	defer func(absDev TouchPad) {
+		err := absDev.Close()
+		if err != nil {
+			t.Fatalf("Failed to close device. Last error was: %s\n", err)
+		}
+	}(absDev)
 
 	err = absDev.LeftPress()
 	if err != nil {
@@ -50,11 +85,6 @@ func TestBasicTouchPadMoves(t *testing.T) {
 	err = absDev.RightRelease()
 	if err != nil {
 		t.Fatalf("Failed to perform right key release. Last error was: %s\n", err)
-	}
-
-	err = absDev.Close()
-	if err != nil {
-		t.Fatalf("Failed to close device. Last error was: %s\n", err)
 	}
 }
 
