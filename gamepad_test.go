@@ -104,7 +104,7 @@ func TestHatMovement(t *testing.T) {
 
 	err = vg.HatPress(HatUp)
 	if err != nil {
-		t.Fatalf("Falied to move hat up")
+		t.Fatalf("Failed to move hat up")
 	}
 	err = vg.HatRelease(HatUp)
 	if err != nil {
@@ -112,7 +112,7 @@ func TestHatMovement(t *testing.T) {
 	}
 	err = vg.HatPress(HatRight)
 	if err != nil {
-		t.Fatalf("Falied to move hat right")
+		t.Fatalf("Failed to move hat right")
 	}
 	err = vg.HatRelease(HatRight)
 	if err != nil {
@@ -120,7 +120,7 @@ func TestHatMovement(t *testing.T) {
 	}
 	err = vg.HatPress(HatDown)
 	if err != nil {
-		t.Fatalf("Falied to move hat down")
+		t.Fatalf("Failed to move hat down")
 	}
 	err = vg.HatRelease(HatDown)
 	if err != nil {
@@ -128,7 +128,7 @@ func TestHatMovement(t *testing.T) {
 	}
 	err = vg.HatPress(HatLeft)
 	if err != nil {
-		t.Fatalf("Falied to move hat left")
+		t.Fatalf("Failed to move hat left")
 	}
 	err = vg.HatRelease(HatLeft)
 	if err != nil {
