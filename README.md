@@ -2,7 +2,7 @@ Uinput [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](ht
 ====
 
 This package provides pure go wrapper functions for the LINUX uinput device, which allows to create virtual input devices
-in userspace. At the moment this package offers a virtual keyboard implementation as well as a virtual mouse device,
+in userspace. At the moment this package offers a virtual keyboard implementation as well as a virtual mouse device,gamepad,
 a touch pad device & a dial device.
 
 The keyboard can be used to either send single key presses or hold down a specified key and release it later
