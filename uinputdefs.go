@@ -7,6 +7,7 @@ const (
 	uinputMaxNameSize = 80
 	uiDevCreate       = 0x5501
 	uiDevDestroy      = 0x5502
+	uiDevSetup        = 0x405c5503
 	// this is for 64 length buffer to store name
 	// for another length generate using : (len << 16) | 0x8000552C
 	uiGetSysname = 0x8041552c
