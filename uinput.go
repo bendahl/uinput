@@ -139,7 +139,7 @@ func createUsbDevice(deviceFile *os.File, dev uinputUserDev) (fd *os.File, err e
 		_ = deviceFile.Close()
 		return nil, fmt.Errorf("failed to write user device buffer: %v", err)
 	}
-	_, err = deviceFile.Write(buf.Bytes())
+	err = ioctl(deviceFile, uiDevSetup, uintptr(unsafe.Pointer(buf)))
 	if err != nil {
 		_ = deviceFile.Close()
 		return nil, fmt.Errorf("failed to write uidev struct to device file: %v", err)
