@@ -228,6 +228,8 @@ Thanks robpre and MetalBlueberry for your valuable input!
 2022-09-01: Release v1.6.0 adds a new gamepad device. Thanks @gitautas for providing the implementation and thanks to @AndrusGerman for the inspiration! 
 Also, thanks to @sheharyaar there is now a new function `FetchSyspath()` that returns the syspath to the device file.
 
+2023-04-27: Release 1.6.1 fixes uinput functionality on Wayland. Thanks to @gslandtreter for this fix and for pointing out the relevant piece of documentation!
+
 TODO
 ----
 The current API can be considered stable and the overall functionality (as originally envisioned) is complete.
