@@ -230,6 +230,9 @@ Also, thanks to @sheharyaar there is now a new function `FetchSyspath()` that re
 
 2023-04-27: Release 1.6.1 fixes uinput functionality on Wayland. Thanks to @gslandtreter for this fix and for pointing out the relevant piece of documentation!
 
+2023-05-10: Release 1.6.2 fixes uinput an issue introduced in version 1.6.1 that will break backward compatibility. The change will be reverted for now. 
+Options to improve compatibility with newer systems are being evaluated. Thanks to @wenfer for the hint!  
+
 TODO
 ----
 The current API can be considered stable and the overall functionality (as originally envisioned) is complete.
