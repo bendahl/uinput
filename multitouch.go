@@ -137,6 +137,7 @@ func createMultiTouch(path string, name []byte, minX int32, maxX int32, minY int
 			Absmax: absMax})
 }
 
+// The contact will be held down at the coordinates specified
 func (c multiTouchContact) TouchDownAt(x int32, y int32) error {
 	var events []inputEvent
 
@@ -167,6 +168,7 @@ func (c multiTouchContact) TouchDownAt(x int32, y int32) error {
 	return c.sendAbsEvent(events)
 }
 
+// The contact will be raised off of the surface
 func (c multiTouchContact) TouchUp() error {
 	c.tracking_id = -1
 	return c.sendAbsEvent(nil)
