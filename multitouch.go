@@ -157,12 +157,6 @@ func (c multiTouchContact) TouchDownAt(x int32, y int32) error {
 		Value: y,
 	})
 
-	events = append(events, inputEvent{
-		Type:  evAbs,
-		Code:  0x32,
-		Value: 0x32,
-	})
-
 	c.tracking_id = c.slot
 
 	return c.sendAbsEvent(events)
