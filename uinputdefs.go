@@ -40,6 +40,12 @@ const (
 	absHat0X = 0x10
 	absHat0Y = 0x11
 
+	absMtSlot       = 0x2f
+	absMtTouchMajor = 0x30
+	absMtPositionX  = 0x35
+	absMtPositionY  = 0x36
+	absMtTrackingId = 0x39
+
 	synReport        = 0
 	evMouseBtnLeft   = 0x110
 	evMouseBtnRight  = 0x111
