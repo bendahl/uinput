@@ -121,7 +121,7 @@ func TestMultiTouchMoveToFailsOnClosedDevice(t *testing.T) {
 	}
 
 	err = contacts[0].TouchDownAt(1, 1)
-	if err != nil {
+	if err == nil {
 		t.Fatalf("Expected error due to closed device, but no error was returned.")
 	}
 }
