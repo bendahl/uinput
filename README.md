@@ -233,6 +233,9 @@ Also, thanks to @sheharyaar there is now a new function `FetchSyspath()` that re
 2023-05-10: Release 1.6.2 fixes uinput an issue introduced in version 1.6.1 that will break backward compatibility. The change will be reverted for now. 
 Options to improve compatibility with newer systems are being evaluated. Thanks to @wenfer for the hint!  
 
+2023-11-22: Release 1.7.0 adds support for multitouch devices! Thanks to @SnoutBug for this addition! See issue #37 for details. 
+
+
 TODO
 ----
 The current API can be considered stable and the overall functionality (as originally envisioned) is complete.
