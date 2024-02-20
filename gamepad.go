@@ -199,22 +199,22 @@ func (vg vGamepad) sendHatEvent(direction HatDirection, action HatAction) error 
 	case HatUp:
 		{
 			event = absHat0Y
-			value = -1
+			value = -MaximumAxisValue
 		}
 	case HatDown:
 		{
 			event = absHat0Y
-			value = 1
+			value = MaximumAxisValue
 		}
 	case HatLeft:
 		{
 			event = absHat0X
-			value = -1
+			value = -MaximumAxisValue
 		}
 	case HatRight:
 		{
 			event = absHat0X
-			value = 1
+			value = MaximumAxisValue
 		}
 	default:
 		{
