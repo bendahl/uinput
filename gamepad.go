@@ -61,6 +61,11 @@ type Gamepad interface {
 	// HatRelease will issue a hat-release event in the given direction
 	HatRelease(direction HatDirection) error
 
+  // LeftTriggerForce performs a trigger-axis-z event with a given force
+  LeftTriggerForce(value float32) error
+  // RightTriggerForce performs a trigger-axis-rz event with a given force
+  RightTriggerForce(value float32) error
+
 	io.Closer
 }
 
@@ -123,6 +128,14 @@ func (vg vGamepad) RightStickMoveX(value float32) error {
 
 func (vg vGamepad) RightStickMoveY(value float32) error {
 	return vg.sendStickAxisEvent(absRY, value)
+}
+
+func (vg vGamepad) LeftTriggerForce(value float32) error {
+  return vg.sendStickAxisEvent(absZ, value)
+}
+
+func (vg vGamepad) RightTriggerForce(value float32) error {
+  return vg.sendStickAxisEvent(absRZ, value)
 }
 
 func (vg vGamepad) RightStickMove(x, y float32) error {
