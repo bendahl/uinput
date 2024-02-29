@@ -96,6 +96,34 @@ func TestAxisMovement(t *testing.T) {
 	}
 }
 
+//This test press the triggers with some amount of force
+func TestTriggerAxis(t *testing.T) {
+	vg, err := CreateGamepad("/dev/uinput", []byte("Hot gophers in your area"), 0xDEAD, 0xBEEF)
+	if err != nil {
+		t.Fatalf("Failed to create the virtual gamepad. Last error was: %s\n", err)
+	}
+
+	err = vg.LeftTriggerForce(1.0)
+	if err != nil {
+		t.Fatalf("Failed to send trigger axis event. Last error was: %s\n", err)
+	}
+
+	err = vg.RightTriggerForce(-1.0)
+	if err != nil {
+		t.Fatalf("Failed to send trigger axis event. Last error was: %s\n", err)
+	}
+
+	err = vg.LeftTriggerForce(-0.2)
+	if err != nil {
+		t.Fatalf("Failed to send trigger axis event. Last error was: %s\n", err)
+	}
+
+	err = vg.RightTriggerForce(0.2)
+	if err != nil {
+		t.Fatalf("Failed to send trigger axis event. Last error was: %s\n", err)
+	}
+}
+
 func TestHatMovement(t *testing.T) {
 	vg, err := CreateGamepad("/dev/uinput", []byte("Hot gophers in your area"), 0xDEAD, 0xBEEF)
 	if err != nil {
